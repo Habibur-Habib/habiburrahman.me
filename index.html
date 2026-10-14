@@ -47,13 +47,13 @@
   .navlinks a{font-size:0.92rem; color:var(--muted); text-decoration:none; transition:color .2s;}
   .navlinks a:hover{color:var(--text);}
   .navlinks{display:none;}
-  @media(min-width:720px){.navlinks{display:flex;}}
+  @media(min-width:960px){.navlinks{display:flex;}}
   .navtoggle{
     display:flex; align-items:center; justify-content:center;
     width:38px; height:38px; background:none; border:1px solid var(--line); border-radius:8px;
     color:var(--text); cursor:pointer;
   }
-  @media(min-width:720px){.navtoggle{display:none;}}
+  @media(min-width:960px){.navtoggle{display:none;}}
   .navtoggle svg{width:18px; height:18px;}
   .mobilemenu{
     display:none; flex-direction:column; gap:2px;
@@ -65,7 +65,7 @@
     border-top:1px solid var(--line);
   }
   .mobilemenu a:active{color:var(--amber);}
-  @media(min-width:720px){.mobilemenu{display:none !important;}}
+  @media(min-width:960px){.mobilemenu{display:none !important;}}
 
   /* HERO */
   .hero{
@@ -118,6 +118,34 @@
   .sec-head{display:flex; align-items:baseline; gap:14px; margin-bottom:36px;}
   .sec-num{font-family:var(--mono); color:var(--cyan); font-size:0.85rem;}
   .sec-head h2{font-family:var(--disp); font-weight:600; font-size:1.7rem; margin:0;}
+
+  /* PROJECTS SLIDER */
+  .slider-viewport{overflow:hidden; border:1px solid var(--line); border-radius:14px; background:var(--bg-raised);}
+  .slider-track{display:flex; transition:transform .5s ease;}
+  .slide{
+    flex:0 0 100%; min-width:0; padding:38px 34px; min-height:250px;
+    display:flex; flex-direction:column; justify-content:center; gap:14px;
+  }
+  .slide .idx{font-family:var(--mono); font-size:0.82rem; color:var(--cyan);}
+  .slide h3{font-family:var(--disp); font-weight:600; font-size:clamp(1.3rem, 3vw, 1.7rem); margin:0;}
+  .slide p{margin:0; color:var(--muted); font-size:1rem; max-width:64ch;}
+  .tags{display:flex; flex-wrap:wrap; gap:8px; margin-top:6px;}
+  .tag{font-family:var(--mono); font-size:0.76rem; color:var(--amber); border:1px solid var(--line); border-radius:20px; padding:4px 12px;}
+  .slider-controls{display:flex; align-items:center; justify-content:center; gap:20px; margin-top:20px;}
+  .s-arrow{
+    width:42px; height:42px; display:flex; align-items:center; justify-content:center;
+    background:none; border:1px solid var(--line); border-radius:10px; color:var(--text); cursor:pointer;
+    transition:border-color .2s, color .2s;
+  }
+  .s-arrow:hover{border-color:var(--cyan); color:var(--cyan);}
+  .s-arrow svg{width:18px; height:18px;}
+  .s-dots{display:flex; align-items:center; gap:10px;}
+  .s-dot{
+    width:8px; height:8px; padding:0; border:none; border-radius:8px; background:var(--line); cursor:pointer;
+    transition:width .25s ease, background .25s ease;
+  }
+  .s-dot.active{width:24px; background:var(--amber);}
+  @media(max-width:600px){ .slide{padding:28px 20px;} }
 
   /* ABOUT */
   .about-grid{display:grid; gap:28px;}
@@ -190,6 +218,7 @@
   <div class="wrap">
     <a href="#top" class="brand">Habibur<span>.</span>Rahman</a>
     <ul class="navlinks">
+      <li><a href="#projects">Projects</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#experience">Experience</a></li>
       <li><a href="#skills">Skills</a></li>
@@ -202,6 +231,7 @@
     </button>
   </div>
   <div class="mobilemenu" id="mobileMenu">
+    <a href="#projects">Projects</a>
     <a href="#about">About</a>
     <a href="#experience">Experience</a>
     <a href="#skills">Skills</a>
@@ -294,6 +324,47 @@
     </div>
   </div>
 </div>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">00</span><h2>Projects</h2></div>
+    <div class="slider" id="projSlider" role="region" aria-roledescription="carousel" aria-label="Project highlights">
+      <div class="slider-viewport">
+        <div class="slider-track" id="projTrack">
+        <article class="slide" role="group" aria-roledescription="slide" aria-label="1 of 4">
+          <div class="idx">01 / 04</div>
+          <h3>Enterprise Firewall Security</h3>
+          <p>Deployed and hardened Fortinet FortiGate UTM firewalls securing 1000+ users; firewall policies, VPN, web filtering and threat prevention.</p>
+          <div class="tags"><span class="tag">Fortinet</span><span class="tag">FortiGate</span><span class="tag">VPN</span><span class="tag">UTM</span></div>
+        </article>
+        <article class="slide" role="group" aria-roledescription="slide" aria-label="2 of 4">
+          <div class="idx">02 / 04</div>
+          <h3>Data Center Virtualization</h3>
+          <p>Built and managed VMware ESXi/vSphere virtualization on HP SimpliVity hyperconverged infrastructure for the corporate data center.</p>
+          <div class="tags"><span class="tag">VMware</span><span class="tag">ESXi</span><span class="tag">vSphere</span><span class="tag">HCI</span></div>
+        </article>
+        <article class="slide" role="group" aria-roledescription="slide" aria-label="3 of 4">
+          <div class="idx">03 / 04</div>
+          <h3>Corporate Email Infrastructure</h3>
+          <p>Administered Zimbra mail servers with Barracuda email security for 1000+ users; anti-spam, archiving and high availability.</p>
+          <div class="tags"><span class="tag">Zimbra</span><span class="tag">Barracuda</span><span class="tag">Linux</span></div>
+        </article>
+        <article class="slide" role="group" aria-roledescription="slide" aria-label="4 of 4">
+          <div class="idx">04 / 04</div>
+          <h3>Network Infrastructure &amp; Security</h3>
+          <p>Designed and maintained Cisco L2/L3 switched networks with VLAN segmentation, plus IP CCTV and biometric access systems.</p>
+          <div class="tags"><span class="tag">Cisco</span><span class="tag">VLAN</span><span class="tag">CCTV</span></div>
+        </article>
+        </div>
+      </div>
+      <div class="slider-controls">
+        <button class="s-arrow" id="projPrev" aria-label="Previous project"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <div class="s-dots" id="projDots"><button class="s-dot active" aria-label="Go to project 1"></button><button class="s-dot" aria-label="Go to project 2"></button><button class="s-dot" aria-label="Go to project 3"></button><button class="s-dot" aria-label="Go to project 4"></button></div>
+        <button class="s-arrow" id="projNext" aria-label="Next project"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      </div>
+    </div>
+  </div>
+</section>
 
 <section id="about">
   <div class="wrap about-grid">
@@ -473,6 +544,46 @@
   menu.querySelectorAll('a').forEach(function(a){
     a.addEventListener('click', function(){ menu.classList.remove('open'); });
   });
+})();
+</script>
+<script>
+(function(){
+  var slider=document.getElementById('projSlider');
+  if(!slider) return;
+  var track=document.getElementById('projTrack');
+  var slides=track.children, dots=slider.querySelectorAll('.s-dot');
+  var n=slides.length, i=0, timer=null, hover=false;
+  var reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function go(k){
+    i=(k+n)%n;
+    track.style.transform='translateX(-'+(i*100)+'%)';
+    for(var d=0; d<n; d++){
+      dots[d].classList.toggle('active', d===i);
+      dots[d].setAttribute('aria-current', d===i ? 'true' : 'false');
+      slides[d].setAttribute('aria-hidden', d===i ? 'false' : 'true');
+    }
+  }
+  function stop(){ clearInterval(timer); timer=null; }
+  function start(){ stop(); if(!reduce && !hover) timer=setInterval(function(){ go(i+1); }, 6000); }
+  document.getElementById('projPrev').addEventListener('click', function(){ go(i-1); start(); });
+  document.getElementById('projNext').addEventListener('click', function(){ go(i+1); start(); });
+  for(var d=0; d<n; d++){ (function(k){ dots[k].addEventListener('click', function(){ go(k); start(); }); })(d); }
+  slider.addEventListener('pointerenter', function(e){ if(e.pointerType==='mouse'){ hover=true; stop(); } });
+  slider.addEventListener('pointerleave', function(e){ if(e.pointerType==='mouse'){ hover=false; start(); } });
+  slider.addEventListener('focusin', stop);
+  slider.addEventListener('focusout', function(){ start(); });
+  slider.addEventListener('keydown', function(e){
+    if(e.key==='ArrowLeft'){ go(i-1); start(); }
+    if(e.key==='ArrowRight'){ go(i+1); start(); }
+  });
+  var x0=null;
+  slider.addEventListener('touchstart', function(e){ x0=e.touches[0].clientX; }, {passive:true});
+  slider.addEventListener('touchend', function(e){
+    if(x0===null) return;
+    var dx=e.changedTouches[0].clientX-x0; x0=null;
+    if(Math.abs(dx)>40){ go(dx<0 ? i+1 : i-1); start(); }
+  });
+  go(0); start();
 })();
 </script>
 </body></html>
