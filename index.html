@@ -228,6 +228,32 @@
   .js .reveal{opacity:0; transform:translateY(26px);}
   .js .reveal.in{opacity:1; transform:none;}
 
+  /* Per-section glows (platcloud-style) */
+  section.sec{position:relative; isolation:isolate;}
+  section.sec::before{content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+    background:radial-gradient(640px 320px at 12% 18%, rgba(5,150,105,.09), transparent 70%);}
+  #skills::before{background:radial-gradient(640px 320px at 88% 12%, rgba(129,140,248,.11), transparent 70%);}
+  #projects::before{background:radial-gradient(720px 340px at 6% 88%, rgba(5,150,105,.08), transparent 70%);}
+  #certifications::before{background:radial-gradient(660px 320px at 92% 85%, rgba(167,139,250,.10), transparent 70%);}
+  #education::before{background:radial-gradient(620px 320px at 10% 22%, rgba(5,150,105,.09), transparent 70%);}
+  #contact::before{background:radial-gradient(720px 340px at 50% 28%, rgba(129,140,248,.09), transparent 70%);}
+  [data-theme="dark"] section.sec::before{background:radial-gradient(640px 320px at 12% 18%, rgba(16,185,129,.15), transparent 70%);}
+  [data-theme="dark"] #skills::before{background:radial-gradient(640px 320px at 88% 12%, rgba(129,140,248,.16), transparent 70%);}
+  [data-theme="dark"] #projects::before{background:radial-gradient(720px 340px at 6% 88%, rgba(16,185,129,.14), transparent 70%);}
+  [data-theme="dark"] #certifications::before{background:radial-gradient(660px 320px at 92% 85%, rgba(167,139,250,.15), transparent 70%);}
+  [data-theme="dark"] #education::before{background:radial-gradient(620px 320px at 10% 22%, rgba(16,185,129,.15), transparent 70%);}
+  [data-theme="dark"] #contact::before{background:radial-gradient(720px 340px at 50% 28%, rgba(129,140,248,.14), transparent 70%);}
+
+  /* Varied reveal per section */
+  .js section.rv-l .reveal{transform:translateX(-28px);}
+  .js section.rv-r .reveal{transform:translateX(28px);}
+  .js section.rv-z .reveal{transform:scale(.93);}
+  .js section.rv-l .reveal.in, .js section.rv-r .reveal.in, .js section.rv-z .reveal.in{transform:none;}
+  @media (prefers-reduced-motion: reduce){
+    .js section.rv-l .reveal, .js section.rv-r .reveal, .js section.rv-z .reveal{transform:none;}
+  }
+
+
   /* TIMELINE */
   .summary{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:22px 26px; margin:0 0 36px; box-shadow:var(--shadow);}
   .summary .k{font-family:var(--mono); font-size:.7rem; letter-spacing:.14em; color:var(--em); text-transform:uppercase; margin-bottom:8px;}
@@ -558,7 +584,7 @@
 </header>
 
 <!-- EXPERIENCE -->
-<section id="experience" class="sec">
+<section id="experience" class="sec rv-l">
   <div class="wrap">
     <div class="sec-head reveal"><div class="eyebrow">//CAREER JOURNEY</div><h2>Professional Experience</h2></div>
 
@@ -618,7 +644,7 @@
 </section>
 
 <!-- SKILLS -->
-<section id="skills" class="sec">
+<section id="skills" class="sec rv-z">
   <div class="wrap">
     <div class="sec-head reveal"><div class="eyebrow">//WHAT I WORK WITH</div><h2>Skills &amp; Technologies</h2></div>
     <div class="filters reveal" id="filters">
@@ -697,7 +723,7 @@
 </section>
 
 <!-- CERTIFICATIONS -->
-<section id="certifications" class="sec">
+<section id="certifications" class="sec rv-r">
   <div class="wrap">
     <div class="sec-head reveal"><div class="eyebrow">//CREDENTIALS</div><h2>Certifications</h2></div>
     <div class="slider reveal" id="certSlider" role="region" aria-roledescription="carousel" aria-label="Certifications">
@@ -759,7 +785,7 @@
 </section>
 
 <!-- EDUCATION -->
-<section id="education" class="sec">
+<section id="education" class="sec rv-l">
   <div class="wrap">
     <div class="sec-head reveal"><div class="eyebrow">//ACADEMIC BACKGROUND</div><h2>Education</h2></div>
     <div class="edu">
