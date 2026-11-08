@@ -748,7 +748,7 @@
     }
   }
   function stop(){ clearInterval(timer); timer=null; }
-  function start(){ stop(); if(!reduce && !hover) timer=setInterval(function(){ go(i+1); }, 6000); }
+  function start(){ stop(); if(!reduce && !hover) timer=setInterval(function(){ go(i+1); }, 5000); }
   document.getElementById('projPrev').addEventListener('click', function(){ go(i-1); start(); });
   document.getElementById('projNext').addEventListener('click', function(){ go(i+1); start(); });
   for(var d=0; d<n; d++){ (function(k){ dots[k].addEventListener('click', function(){ go(k); start(); }); })(d); }
@@ -788,7 +788,7 @@
     }
   }
   function stop(){ clearInterval(timer); timer=null; }
-  function start(){ stop(); if(!reduce && !hover) timer=setInterval(function(){ go(i+1); }, 6000); }
+  function start(){ stop(); if(!reduce && !hover) timer=setInterval(function(){ go(i+1); }, 5000); }
   document.getElementById('certPrev').addEventListener('click', function(){ go(i-1); start(); });
   document.getElementById('certNext').addEventListener('click', function(){ go(i+1); start(); });
   for(var d=0; d<n; d++){ (function(k){ dots[k].addEventListener('click', function(){ go(k); start(); }); })(d); }
