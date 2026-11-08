@@ -150,10 +150,10 @@
   .spy a.active span.lbl,.spy a:hover span.lbl{opacity:1; transform:none;}
   .spy a i{width:9px; height:9px; border-radius:50%; border:1.5px solid var(--faint); background:var(--bg); transition:all .25s;}
   .spy a.active i{background:var(--em); border-color:var(--em); box-shadow:0 0 0 4px var(--em-soft);}
-  @media(max-width:1239px){.spy{display:none;}}
+  @media(max-width:1024px){.spy{display:none;}}
 
   /* HERO */
-  .hero{padding:64px 0 56px; text-align:center;}
+  .hero{position:relative; padding:64px 0 56px; text-align:center;}
   .hero .wrap{display:flex; flex-direction:column; align-items:center;}
   .badge{
     display:inline-flex; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--line); border-radius:999px;
@@ -332,10 +332,53 @@
   .foot .links{display:flex; gap:20px;}
   .foot a{text-decoration:none; transition:color .2s;}
   .foot a:hover{color:var(--em);}
-  .totop{position:fixed; right:20px; bottom:calc(20px + env(safe-area-inset-bottom,0px)); z-index:70; width:46px; height:46px; border-radius:50%; background:var(--em); color:var(--on-em); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 22px rgba(5,150,105,.35); opacity:0; pointer-events:none; transform:translateY(10px); transition:all .3s;}
+  .totop{position:fixed; left:20px; bottom:calc(20px + env(safe-area-inset-bottom,0px)); z-index:70; width:46px; height:46px; border-radius:50%; background:var(--em); color:var(--on-em); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 22px rgba(5,150,105,.35); opacity:0; pointer-events:none; transform:translateY(10px); transition:all .3s;}
   .totop.show{opacity:1; pointer-events:auto; transform:none;}
   .totop:hover{background:var(--em-d);}
   .totop svg{width:20px; height:20px;}
+
+  /* Floating hero mini-windows */
+  .floatwin{position:absolute; width:196px; text-align:left; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:12px 14px; box-shadow:0 12px 30px rgba(15,23,42,.12); font-family:var(--mono); font-size:.68rem; color:var(--muted); z-index:3; animation:floaty 5s ease-in-out infinite;}
+  .floatwin.fw1{left:-232px; top:6px;}
+  .floatwin.fw2{right:-232px; top:96px; animation-delay:1.2s;}
+  @keyframes floaty{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+  .fw-head{display:flex; align-items:center; gap:7px; font-size:.66rem; letter-spacing:.1em; color:var(--text); margin-bottom:10px;}
+  .fw-row{display:flex; align-items:center; gap:8px; margin-bottom:7px;}
+  .fw-row:last-child{margin-bottom:0;}
+  .fw-row span{width:30px; color:var(--faint);}
+  .fw-row b{width:34px; text-align:right; color:var(--text); font-weight:500;}
+  .fw-bar{flex:1; height:5px; background:var(--chip); border-radius:99px; overflow:hidden;}
+  .fw-bar i{display:block; height:100%; background:var(--em); border-radius:99px; transition:width 1.4s ease;}
+  .fw-big{color:var(--em); font-size:.74rem; letter-spacing:.04em; margin-bottom:5px;}
+  .fw-sub{color:var(--faint); font-size:.64rem; line-height:1.5;}
+  @media(max-width:1150px){.floatwin{display:none;}}
+
+  /* Robot bot button */
+  .botbtn{position:fixed; right:20px; bottom:calc(20px + env(safe-area-inset-bottom,0px)); z-index:80; width:58px; height:58px; border-radius:50%; background:var(--em); border:2px solid var(--on-em); cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 26px rgba(5,150,105,.45); animation:botbob 3s ease-in-out infinite; transition:transform .2s;}
+  .botbtn:hover{transform:scale(1.08);}
+  @keyframes botbob{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+  .botbtn svg{width:34px; height:34px;}
+  .botbtn .on{position:absolute; right:2px; top:2px; width:12px; height:12px; border-radius:50%; background:#22C55E; border:2px solid var(--on-em);}
+
+  /* Terminal modal */
+  .term{position:fixed; inset:0; z-index:100; background:rgba(2,6,4,.6); display:flex; align-items:center; justify-content:center; padding:20px; opacity:0; visibility:hidden; transition:opacity .25s,visibility .25s;}
+  .term.open{opacity:1; visibility:visible;}
+  .term-win{width:min(680px,94vw); max-height:78vh; display:flex; flex-direction:column; background:#0A0F0D; border:1px solid #1E2F28; border-radius:14px; overflow:hidden; box-shadow:0 24px 70px rgba(0,0,0,.5); transform:translateY(10px) scale(.98); transition:transform .25s;}
+  .term.open .term-win{transform:none;}
+  .term-bar{display:flex; align-items:center; gap:7px; padding:11px 14px; background:#111A16; border-bottom:1px solid #1E2F28;}
+  .tdot{width:11px; height:11px; border-radius:50%;}
+  .tdot.r{background:#EF4444;} .tdot.y{background:#F59E0B;} .tdot.g{background:#22C55E;}
+  .term-title{margin-left:8px; font-family:var(--mono); font-size:.74rem; color:#9FB0A8; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .term-hint{font-family:var(--mono); font-size:.66rem; color:#7F928A;}
+  .term-x{background:none; border:none; color:#9FB0A8; font-size:1.25rem; line-height:1; cursor:pointer; padding:2px 6px;}
+  .term-x:hover{color:#fff;}
+  .term-out{flex:1; overflow-y:auto; padding:16px 18px; font-family:var(--mono); font-size:.82rem; line-height:1.65; color:#A7F3D0; white-space:pre-wrap; word-break:break-word; min-height:220px;}
+  .term-out .cmd{color:#F8FAFC;}
+  .term-out .dim{color:#7F928A;}
+  .term-out .hl{color:#34D399;}
+  .term-in{display:flex; align-items:center; gap:8px; padding:12px 18px; border-top:1px solid #1E2F28; font-family:var(--mono); font-size:.82rem; color:#34D399;}
+  .term-in input{flex:1; background:none; border:none; outline:none; color:#F8FAFC; font-family:var(--mono); font-size:.82rem;}
+
 
   /* BOOT */
   #boot{position:fixed; inset:0; z-index:999; background:#000; color:#22C55E; font-family:var(--mono); display:flex; align-items:center; justify-content:center; transition:opacity .5s ease; animation:bootfail .01s 4s forwards;}
@@ -449,6 +492,17 @@
     <div class="frame reveal">
       <img src="images/profile.jpg" alt="Habibur Rahman">
       <i class="c c1"></i><i class="c c2"></i><i class="c c3"></i><i class="c c4"></i>
+      <div class="floatwin fw1" aria-hidden="true">
+        <div class="fw-head"><span class="gdot"></span>SYS MONITOR</div>
+        <div class="fw-row"><span>CPU</span><div class="fw-bar"><i id="fwCpu" style="width:32%"></i></div><b id="fwCpuV">32%</b></div>
+        <div class="fw-row"><span>MEM</span><div class="fw-bar"><i id="fwMem" style="width:48%"></i></div><b id="fwMemV">48%</b></div>
+        <div class="fw-row"><span>NET</span><div class="fw-bar"><i id="fwNet" style="width:61%"></i></div><b id="fwNetV">61%</b></div>
+      </div>
+      <div class="floatwin fw2" aria-hidden="true">
+        <div class="fw-head"><span class="gdot"></span>NETWORK</div>
+        <div class="fw-big">ALL LINKS &#9679; UP</div>
+        <div class="fw-sub">FortiGate UTM active<br>1000+ users secured<br>Uptime 99.99%</div>
+      </div>
     </div>
     <p class="lede reveal">9+ years keeping business-critical systems online — networks, servers, security and support — with 99.99% uptime across IT distribution and construction organizations.</p>
     <div class="stats reveal">
@@ -765,6 +819,16 @@
 
 <button class="totop" id="toTop" type="button" aria-label="Scroll to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
 
+<button class="botbtn" id="botBtn" type="button" aria-label="Open terminal assistant"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="3.4" r="1.1" fill="#fff"/><path d="M12 4.5v2.4" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/><rect x="4.5" y="7" width="15" height="11" rx="3.4" fill="#fff"/><circle cx="9.2" cy="12" r="1.5" fill="#0A0F0D"/><circle cx="14.8" cy="12" r="1.5" fill="#0A0F0D"/><path d="M9.5 15.2h5" stroke="#0A0F0D" stroke-width="1.5" stroke-linecap="round"/><path d="M4.5 11v3M19.5 11v3" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg><span class="on"></span></button>
+
+<div class="term" id="term" role="dialog" aria-label="Terminal assistant" aria-hidden="true">
+  <div class="term-win">
+    <div class="term-bar"><span class="tdot r"></span><span class="tdot y"></span><span class="tdot g"></span><span class="term-title">habib@portfolio ~ terminal</span><span class="term-hint">ESC: close</span><button class="term-x" id="termX" type="button" aria-label="Close terminal">&times;</button></div>
+    <div class="term-out" id="termOut"></div>
+    <div class="term-in"><span>habib@portfolio:~$</span><input id="termIn" type="text" autocomplete="off" spellcheck="false" aria-label="Terminal command"></div>
+  </div>
+</div>
+
 <script>
 /* Boot splash */
 (function(){
@@ -967,6 +1031,66 @@
     var body='Name: '+n+'\nEmail: '+em+'\n\n'+m;
     window.location.href='mailto:engrhabibur.rahman93@gmail.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
   });
+})();
+</script>
+<script>
+/* Terminal bot + floating monitor animation */
+(function(){
+  var term=document.getElementById('term'), out=document.getElementById('termOut'),
+      inp=document.getElementById('termIn'), btn=document.getElementById('botBtn'),
+      x=document.getElementById('termX'), booted=false, hist=[], hi=-1;
+  function line(txt, cls){ var d=document.createElement('div'); if(cls) d.className=cls; d.textContent=txt; out.appendChild(d); out.scrollTop=out.scrollHeight; }
+  function boot(){
+    line('INITIALIZING habib@portfolio SHELL ...', 'dim');
+    line('LOADING PROFILE DATA MODULES ... OK', 'dim');
+    line('SYSTEM READY — type \'help\' to see commands.', 'hl');
+  }
+  function open(){ term.classList.add('open'); term.setAttribute('aria-hidden','false'); if(!booted){ boot(); booted=true; } setTimeout(function(){ inp.focus(); },80); }
+  function close(){ term.classList.remove('open'); term.setAttribute('aria-hidden','true'); btn.focus(); }
+  btn.addEventListener('click', open);
+  x.addEventListener('click', close);
+  term.addEventListener('click', function(e){ if(e.target===term) close(); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape' && term.classList.contains('open')) close(); });
+  var CMDS={
+    help:"Available commands: help · whoami · about · skills · certs · projects · experience · education · contact · resume · scan · date · clear · exit",
+    whoami:"HABIBUR RAHMAN — IT Infrastructure & Network Security Specialist · 9+ years · Dhaka, Bangladesh · STATUS: ONLINE",
+    about:"9+ years keeping business-critical systems online — networks, servers, security and support — with 99.99% uptime across IT distribution and construction organizations.",
+    skills:"Fortinet FortiGate / UTM · VMware ESXi / vSphere · Cisco routing & switching · Windows Server / AD · Zimbra · Barracuda · Linux · VLAN · CCTV · Kaspersky — 16 skills + 14 tech tags (see Skills section).",
+    certs:"CCNA 200-301 (Cisco, 2025-2028) · Network Security (Cisco / NACTAR, 2026) · MTCNA (Udemy, 2025) · Dell SE: Core Client / Latitude Rugged / Server / Workstation (2022) · HPE Storage + ProLiant (2022) · Acer Certified Engineer L1 + Engineer (2019-2020) — 11 total.",
+    projects:"1) Enterprise Firewall Security  2) Data Center Virtualization  3) Corporate Email Infrastructure  4) Network Infrastructure & Security — see Projects slider.",
+    experience:"Assistant Manager - IT, National Development Engineers Ltd. (Jun 2023 - now) · Officer - IT, Brand Pvt Ltd (Feb 2017 - Jun 2023).",
+    education:"BSc CSE, Northern University Bangladesh — coursework done 2026, result pending · Diploma in Computer Technology, Naogaon Polytechnic (2015, CGPA 3.27) · SSC Science, Al-Hera Academy (2011, GPA 4.06).",
+    contact:"Email: engrhabibur.rahman93@gmail.com · Phone: +880 1786-993989 · LinkedIn: linkedin.com/in/habiburhabib007 · GitHub: github.com/Habibur-Habib",
+    resume:"CVs live on LinkedIn (Featured): Gulf format + International (ATS) — linkedin.com/in/habiburhabib007",
+    scan:"Scanning 192.168.1.0/24 ... Fortinet UTM 1.2ms · Core Switch 0.8ms · VMware ESXi 1.1ms · Mail/AD 0.9ms · 1000+ users secured ... 0 threats detected — ALL LINKS UP",
+    hack:"ACCESS GRANTED? Nah. This is a portfolio, not a CTF. :)",
+    sudo:"Nice try — no sudo in this terminal. :)"
+  };
+  inp.addEventListener('keydown', function(e){
+    if(e.key==='ArrowUp'){ e.preventDefault(); if(hist.length){ hi=Math.max(0,hi-1); inp.value=hist[hi]||''; } return; }
+    if(e.key==='ArrowDown'){ e.preventDefault(); if(hist.length){ hi=Math.min(hist.length,hi+1); inp.value=hist[hi]||''; } return; }
+    if(e.key!=='Enter') return;
+    var c=inp.value.trim(); if(!c) return;
+    line('habib@portfolio:~$ '+c, 'cmd');
+    hist.push(c); hi=hist.length;
+    var k=c.toLowerCase().split(' ')[0];
+    if(k==='clear'){ out.innerHTML=''; }
+    else if(k==='exit'){ close(); }
+    else if(k==='date'){ line(new Date().toString()); }
+    else if(k==='matrix'){ for(var i=0;i<3;i++){ var s=''; for(var j=0;j<32;j++) s+=Math.random()<0.5?'0':'1'; line(s,'dim'); } }
+    else if(CMDS[k]){ line(CMDS[k]); }
+    else { line('command not found: '+c+' — type \'help\'', 'dim'); }
+    inp.value='';
+  });
+  term.addEventListener('click', function(){ inp.focus(); });
+  /* Floating monitor bars: gentle live-style drift */
+  var reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function setBar(id, vid, v){ var b=document.getElementById(id), t=document.getElementById(vid); if(!b||!t) return; b.style.width=v+'%'; t.textContent=v+'%'; }
+  if(!reduce){ setInterval(function(){
+    setBar('fwCpu','fwCpuV', 24+Math.floor(Math.random()*28));
+    setBar('fwMem','fwMemV', 42+Math.floor(Math.random()*18));
+    setBar('fwNet','fwNetV', 48+Math.floor(Math.random()*34));
+  }, 2200); }
 })();
 </script>
 </body>
