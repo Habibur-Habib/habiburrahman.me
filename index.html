@@ -180,6 +180,25 @@
   .s-dot.active{width:24px; background:var(--amber);}
   @media(max-width:600px){ .slide{padding:28px 20px;} }
 
+  /* CERTIFICATIONS SLIDER (reuses .slider-* / .slide / .s-arrow / .s-dot) */
+  .cert-slide{display:grid; grid-template-columns:minmax(0,1fr); gap:26px; align-items:center;}
+  .cert-fig{
+    margin:0; position:relative; width:100%; aspect-ratio:4/3; max-height:340px;
+    border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--bg);
+  }
+  .cert-fig img{width:100%; height:100%; object-fit:contain; display:block;}
+  .cert-ph{
+    display:none; position:absolute; inset:0; flex-direction:column; align-items:center; justify-content:center;
+    gap:14px; padding:24px; text-align:center; color:var(--muted);
+    font-family:var(--disp); font-weight:600; font-size:1.05rem; line-height:1.35;
+    background:var(--bg-raised);
+  }
+  .cert-ph svg{width:40px; height:40px; color:var(--cyan);}
+  .cert-fig.is-missing img{display:none;}
+  .cert-fig.is-missing .cert-ph{display:flex;}
+  .cert-info{display:flex; flex-direction:column; gap:14px; min-width:0;}
+  @media(min-width:820px){ .cert-slide{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:36px;} }
+
   /* ABOUT */
   .about-grid{display:grid; gap:28px;}
   @media(min-width:820px){.about-grid{grid-template-columns: 220px 1fr;}}
@@ -512,17 +531,137 @@
 <section id="certifications">
   <div class="wrap">
     <div class="sec-head"><span class="sec-num">04</span><h2>Certifications &amp; Training</h2></div>
-    <div class="cert-list">
-      <div class="cert"><div><div class="name">Cisco Certified Network Associate (CCNA 200-301) — Network Security</div><div class="org">Cisco · NACTAR, 6 months</div></div><div class="year">2024–25</div></div>
-      <div class="cert"><div><div class="name">SE: Core Client Credential</div><div class="org">Dell Technologies</div></div><div class="year">2022</div></div>
-      <div class="cert"><div><div class="name">SE: Latitude Rugged Credential</div><div class="org">Dell Technologies</div></div><div class="year">2022</div></div>
-      <div class="cert"><div><div class="name">SE: Server Credential</div><div class="org">Dell Technologies</div></div><div class="year">2022</div></div>
-      <div class="cert"><div><div class="name">SE: Workstation Credential</div><div class="org">Dell Technologies</div></div><div class="year">2022</div></div>
-      <div class="cert"><div><div class="name">Oracle Cloud Infrastructure Foundations 2021 Certified Associate</div><div class="org">Oracle University</div></div><div class="year">2022</div></div>
-      <div class="cert"><div><div class="name">Storage Fundamentals</div><div class="org">Hewlett Packard Enterprise</div></div><div class="year">2022</div></div>
-      <div class="cert"><div><div class="name">ProLiant Server Foundation</div><div class="org">Hewlett Packard Enterprise</div></div><div class="year">2022</div></div>
-      <div class="cert"><div><div class="name">Acer Certified Engineer L1</div><div class="org">Acer</div></div><div class="year">2020</div></div>
-      <div class="cert"><div><div class="name">Acer Certified Engineer</div><div class="org">Acer</div></div><div class="year">2019</div></div>
+    <div class="slider" id="certSlider" role="region" aria-roledescription="carousel" aria-label="Certifications">
+      <div class="slider-viewport">
+        <div class="slider-track" id="certTrack">
+        <article class="slide cert-slide" role="group" aria-roledescription="slide" aria-label="1 of 10">
+          <figure class="cert-fig">
+            <img src="images/cert-01.jpg" alt="Certificate: Cisco Certified Network Associate (CCNA 200-301) — Network Security">
+            <div class="cert-ph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><polyline points="8.5 14.5 7 22 12 19 17 22 15.5 14.5"/></svg><span>Cisco Certified Network Associate (CCNA 200-301) — Network Security</span></div>
+          </figure>
+          <div class="cert-info">
+            <div class="idx">01 / 10</div>
+            <h3>Cisco Certified Network Associate (CCNA 200-301) — Network Security</h3>
+            <p>Cisco · NACTAR, 6 months</p>
+            <div class="tags"><span class="tag">2024–25</span></div>
+          </div>
+        </article>
+        <article class="slide cert-slide" role="group" aria-roledescription="slide" aria-label="2 of 10">
+          <figure class="cert-fig">
+            <img src="images/cert-02.jpg" alt="Certificate: SE: Core Client Credential">
+            <div class="cert-ph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><polyline points="8.5 14.5 7 22 12 19 17 22 15.5 14.5"/></svg><span>SE: Core Client Credential</span></div>
+          </figure>
+          <div class="cert-info">
+            <div class="idx">02 / 10</div>
+            <h3>SE: Core Client Credential</h3>
+            <p>Dell Technologies</p>
+            <div class="tags"><span class="tag">2022</span></div>
+          </div>
+        </article>
+        <article class="slide cert-slide" role="group" aria-roledescription="slide" aria-label="3 of 10">
+          <figure class="cert-fig">
+            <img src="images/cert-03.jpg" alt="Certificate: SE: Latitude Rugged Credential">
+            <div class="cert-ph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><polyline points="8.5 14.5 7 22 12 19 17 22 15.5 14.5"/></svg><span>SE: Latitude Rugged Credential</span></div>
+          </figure>
+          <div class="cert-info">
+            <div class="idx">03 / 10</div>
+            <h3>SE: Latitude Rugged Credential</h3>
+            <p>Dell Technologies</p>
+            <div class="tags"><span class="tag">2022</span></div>
+          </div>
+        </article>
+        <article class="slide cert-slide" role="group" aria-roledescription="slide" aria-label="4 of 10">
+          <figure class="cert-fig">
+            <img src="images/cert-04.jpg" alt="Certificate: SE: Server Credential">
+            <div class="cert-ph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><polyline points="8.5 14.5 7 22 12 19 17 22 15.5 14.5"/></svg><span>SE: Server Credential</span></div>
+          </figure>
+          <div class="cert-info">
+            <div class="idx">04 / 10</div>
+            <h3>SE: Server Credential</h3>
+            <p>Dell Technologies</p>
+            <div class="tags"><span class="tag">2022</span></div>
+          </div>
+        </article>
+        <article class="slide cert-slide" role="group" aria-roledescription="slide" aria-label="5 of 10">
+          <figure class="cert-fig">
+            <img src="images/cert-05.jpg" alt="Certificate: SE: Workstation Credential">
+            <div class="cert-ph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><polyline points="8.5 14.5 7 22 12 19 17 22 15.5 14.5"/></svg><span>SE: Workstation Credential</span></div>
+          </figure>
+          <div class="cert-info">
+            <div class="idx">05 / 10</div>
+            <h3>SE: Workstation Credential</h3>
+            <p>Dell Technologies</p>
+            <div class="tags"><span class="tag">2022</span></div>
+          </div>
+        </article>
+        <article class="slide cert-slide" role="group" aria-roledescription="slide" aria-label="6 of 10">
+          <figure class="cert-fig">
+            <img src="images/cert-06.jpg" alt="Certificate: Oracle Cloud Infrastructure Foundations 2021 Certified Associate">
+            <div class="cert-ph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><polyline points="8.5 14.5 7 22 12 19 17 22 15.5 14.5"/></svg><span>Oracle Cloud Infrastructure Foundations 2021 Certified Associate</span></div>
+          </figure>
+          <div class="cert-info">
+            <div class="idx">06 / 10</div>
+            <h3>Oracle Cloud Infrastructure Foundations 2021 Certified Associate</h3>
+            <p>Oracle University</p>
+            <div class="tags"><span class="tag">2022</span></div>
+          </div>
+        </article>
+        <article class="slide cert-slide" role="group" aria-roledescription="slide" aria-label="7 of 10">
+          <figure class="cert-fig">
+            <img src="images/cert-07.jpg" alt="Certificate: Storage Fundamentals">
+            <div class="cert-ph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><polyline points="8.5 14.5 7 22 12 19 17 22 15.5 14.5"/></svg><span>Storage Fundamentals</span></div>
+          </figure>
+          <div class="cert-info">
+            <div class="idx">07 / 10</div>
+            <h3>Storage Fundamentals</h3>
+            <p>Hewlett Packard Enterprise</p>
+            <div class="tags"><span class="tag">2022</span></div>
+          </div>
+        </article>
+        <article class="slide cert-slide" role="group" aria-roledescription="slide" aria-label="8 of 10">
+          <figure class="cert-fig">
+            <img src="images/cert-08.jpg" alt="Certificate: ProLiant Server Foundation">
+            <div class="cert-ph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><polyline points="8.5 14.5 7 22 12 19 17 22 15.5 14.5"/></svg><span>ProLiant Server Foundation</span></div>
+          </figure>
+          <div class="cert-info">
+            <div class="idx">08 / 10</div>
+            <h3>ProLiant Server Foundation</h3>
+            <p>Hewlett Packard Enterprise</p>
+            <div class="tags"><span class="tag">2022</span></div>
+          </div>
+        </article>
+        <article class="slide cert-slide" role="group" aria-roledescription="slide" aria-label="9 of 10">
+          <figure class="cert-fig">
+            <img src="images/cert-09.jpg" alt="Certificate: Acer Certified Engineer L1">
+            <div class="cert-ph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><polyline points="8.5 14.5 7 22 12 19 17 22 15.5 14.5"/></svg><span>Acer Certified Engineer L1</span></div>
+          </figure>
+          <div class="cert-info">
+            <div class="idx">09 / 10</div>
+            <h3>Acer Certified Engineer L1</h3>
+            <p>Acer</p>
+            <div class="tags"><span class="tag">2020</span></div>
+          </div>
+        </article>
+        <article class="slide cert-slide" role="group" aria-roledescription="slide" aria-label="10 of 10">
+          <figure class="cert-fig">
+            <img src="images/cert-10.jpg" alt="Certificate: Acer Certified Engineer">
+            <div class="cert-ph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><polyline points="8.5 14.5 7 22 12 19 17 22 15.5 14.5"/></svg><span>Acer Certified Engineer</span></div>
+          </figure>
+          <div class="cert-info">
+            <div class="idx">10 / 10</div>
+            <h3>Acer Certified Engineer</h3>
+            <p>Acer</p>
+            <div class="tags"><span class="tag">2019</span></div>
+          </div>
+        </article>
+        </div>
+      </div>
+
+      <div class="slider-controls">
+        <button class="s-arrow" id="certPrev" aria-label="Previous certificate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <div class="s-dots" id="certDots"><button class="s-dot active" aria-label="Go to certificate 1"></button><button class="s-dot" aria-label="Go to certificate 2"></button><button class="s-dot" aria-label="Go to certificate 3"></button><button class="s-dot" aria-label="Go to certificate 4"></button><button class="s-dot" aria-label="Go to certificate 5"></button><button class="s-dot" aria-label="Go to certificate 6"></button><button class="s-dot" aria-label="Go to certificate 7"></button><button class="s-dot" aria-label="Go to certificate 8"></button><button class="s-dot" aria-label="Go to certificate 9"></button><button class="s-dot" aria-label="Go to certificate 10"></button></div>
+        <button class="s-arrow" id="certNext" aria-label="Next certificate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      </div>
     </div>
   </div>
 </section>
@@ -616,6 +755,53 @@
     var dx=e.changedTouches[0].clientX-x0; x0=null;
     if(Math.abs(dx)>40){ go(dx<0 ? i+1 : i-1); start(); }
   });
+  go(0); start();
+})();
+</script>
+<script>
+(function(){
+  var slider=document.getElementById('certSlider');
+  if(!slider) return;
+  var track=document.getElementById('certTrack');
+  var slides=track.children, dots=slider.querySelectorAll('.s-dot');
+  var n=slides.length, i=0, timer=null, hover=false;
+  var reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function go(k){
+    i=(k+n)%n;
+    track.style.transform='translateX(-'+(i*100)+'%)';
+    for(var d=0; d<n; d++){
+      dots[d].classList.toggle('active', d===i);
+      dots[d].setAttribute('aria-current', d===i ? 'true' : 'false');
+      slides[d].setAttribute('aria-hidden', d===i ? 'false' : 'true');
+    }
+  }
+  function stop(){ clearInterval(timer); timer=null; }
+  function start(){ stop(); if(!reduce && !hover) timer=setInterval(function(){ go(i+1); }, 6000); }
+  document.getElementById('certPrev').addEventListener('click', function(){ go(i-1); start(); });
+  document.getElementById('certNext').addEventListener('click', function(){ go(i+1); start(); });
+  for(var d=0; d<n; d++){ (function(k){ dots[k].addEventListener('click', function(){ go(k); start(); }); })(d); }
+  slider.addEventListener('pointerenter', function(e){ if(e.pointerType==='mouse'){ hover=true; stop(); } });
+  slider.addEventListener('pointerleave', function(e){ if(e.pointerType==='mouse'){ hover=false; start(); } });
+  slider.addEventListener('focusin', stop);
+  slider.addEventListener('focusout', function(){ start(); });
+  slider.addEventListener('keydown', function(e){
+    if(e.key==='ArrowLeft'){ go(i-1); start(); }
+    if(e.key==='ArrowRight'){ go(i+1); start(); }
+  });
+  var x0=null;
+  slider.addEventListener('touchstart', function(e){ x0=e.touches[0].clientX; }, {passive:true});
+  slider.addEventListener('touchend', function(e){
+    if(x0===null) return;
+    var dx=e.changedTouches[0].clientX-x0; x0=null;
+    if(Math.abs(dx)>40){ go(dx<0 ? i+1 : i-1); start(); }
+  });
+  /* missing-image fallback: swap broken image for the styled placeholder card */
+  var imgs=track.querySelectorAll('.cert-fig img');
+  function miss(img){ img.parentNode.classList.add('is-missing'); }
+  for(var m=0; m<imgs.length; m++){ (function(img){
+    img.addEventListener('error', function(){ miss(img); });
+    if(img.complete && img.naturalWidth===0) miss(img);
+  })(imgs[m]); }
   go(0); start();
 })();
 </script>
