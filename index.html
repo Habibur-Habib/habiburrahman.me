@@ -1192,7 +1192,7 @@
 
 <button class="totop" id="toTop" type="button" aria-label="Scroll to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
 
-<button class="botbtn" id="botBtn" type="button" aria-label="Open terminal assistant" title="Unicorn assistant — click to open the terminal"><video id="botVid" src="images/unicorn-dark.mp4" autoplay muted loop playsinline disablepictureinpicture style="display:none"></video><canvas id="botCanvas" width="192" height="192"></canvas><img id="botImg" src="images/unicorn-dark.png" alt="" draggable="false"><span class="on"></span></button>
+<button class="botbtn" id="botBtn" type="button" aria-label="Open terminal assistant" title="Unicorn assistant — click to open the terminal"><video id="botVid" src="images/unicorn-dark.mp4" autoplay muted loop playsinline disablepictureinpicture style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none"></video><img id="botImg" src="images/unicorn-dark.png" alt="" draggable="false"><canvas id="botCanvas" width="192" height="192"></canvas><span class="on"></span></button>
 
 <div class="term" id="term" role="dialog" aria-label="Terminal assistant" aria-hidden="true">
   <div class="term-win">
@@ -2453,14 +2453,16 @@
   }
   function setMedia(){
     var m=mediaFor();
-    setImg(m.i);
     if(reduced || !m.v){
       /* static image only: reduced motion, or landed (wings folded, facing you) */
       keying=false;
       try{ vid.pause(); }catch(e){}
       cv.style.display='none';
+      setImg(m.i); /* crossfade to the landed/static image */
       return;
     }
+    /* flying: poster stays behind the canvas (hidden once the first keyed frame lands) */
+    img.setAttribute('src', m.i);
     cv.style.display='block';
     if(vid.getAttribute('src')!==m.v){
       vid.setAttribute('src',m.v);
@@ -2487,6 +2489,7 @@
       else if(diff>30) px[i+3]=Math.round(255*(1-(diff-30)/30));
     }
     ctx.putImageData(d,0,0);
+    img.style.opacity='0'; /* first keyed frame is up: hide the poster behind the canvas */
     requestAnimationFrame(keyFrame);
   }
   function startKeying(){
@@ -2496,7 +2499,7 @@
   }
   vid.addEventListener('canplay', function(){ if(!landed && !reduced){ cv.style.display='block'; startKeying(); } });
   vid.addEventListener('playing', startKeying);
-  vid.addEventListener('error', function(){ keying=false; cv.style.display='none'; });
+  vid.addEventListener('error', function(){ keying=false; cv.style.display='none'; img.style.opacity='1'; });
   setMedia();
   new MutationObserver(setMedia).observe(root,{attributes:true,attributeFilter:['data-theme']});
 
@@ -2555,6 +2558,7 @@
   }).observe(term,{attributes:true,attributeFilter:['class']});
 })();
 </script>
+
 
 
 </body>
