@@ -442,6 +442,34 @@
     *{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important;}
     .js .reveal{opacity:1; transform:none;}
   }
+/* ===== CV DOWNLOAD ===== */
+.btn.cvbtn{border-color:var(--em); color:var(--em); background:transparent; line-height:1.65;}
+.btn.cvbtn:hover{background:var(--em); color:var(--on-em); box-shadow:0 8px 22px rgba(5,150,105,.3);}
+[data-theme="dark"] .btn.cvbtn{color:var(--em-d);}
+[data-theme="dark"] .btn.cvbtn:hover{background:var(--em); color:var(--on-em); box-shadow:0 8px 22px rgba(16,185,129,.25);}
+
+.cv{position:fixed; inset:0; z-index:100; background:rgba(2,6,4,.6); display:flex; align-items:center; justify-content:center; padding:20px; opacity:0; visibility:hidden; transition:opacity .25s,visibility .25s;}
+.cv.open{opacity:1; visibility:visible;}
+.cv-win{width:min(460px,94vw); background:var(--surface); border:1px solid var(--line); border-radius:14px; overflow:hidden; box-shadow:0 24px 70px rgba(0,0,0,.5); transform:translateY(10px) scale(.98); transition:transform .25s;}
+.cv.open .cv-win{transform:none;}
+.cv-bar{display:flex; align-items:center; gap:7px; padding:11px 14px; background:#111A16; border-bottom:1px solid #1E2F28;}
+.cv-title{margin-left:8px; font-family:var(--mono); font-size:.74rem; letter-spacing:.08em; color:#9FB0A8; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.cv-x{background:none; border:none; color:#9FB0A8; font-size:1.25rem; line-height:1; cursor:pointer; padding:2px 6px;}
+.cv-x:hover{color:#fff;}
+.cv-body{display:flex; flex-direction:column; gap:10px; padding:16px;}
+.cv-row{position:relative; display:flex; flex-direction:column; gap:2px; padding:14px 44px 14px 16px; background:var(--chip); border:1px solid var(--line); border-radius:10px; text-decoration:none; font-family:var(--mono); transition:border-color .2s,background .2s,transform .15s;}
+.cv-row::after{content:'\2193'; position:absolute; right:16px; top:50%; transform:translateY(-50%); color:var(--em); font-size:1.1rem;}
+.cv-row:hover,.cv-row:focus-visible{border-color:var(--em); background:var(--em-soft); outline:none;}
+.cv-row:active{transform:scale(.99);}
+.cv-name{font-size:.86rem; font-weight:500; color:var(--text);}
+.cv-desc{font-size:.74rem; color:var(--muted);}
+[data-theme="dark"] .cv-win{background:#0A0F0D; border-color:#1E2F28;}
+[data-theme="dark"] .cv-row{background:#111A16; border-color:#1E2F28;}
+[data-theme="dark"] .cv-row::after{color:var(--em-d);}
+[data-theme="dark"] .cv-row:hover,[data-theme="dark"] .cv-row:focus-visible{border-color:var(--em-d); background:var(--em-soft);}
+[data-theme="dark"] .cv-name{color:#F8FAFC;}
+[data-theme="dark"] .cv-desc{color:#9FB0A8;}
+
 </style>
 </head>
 <body>
@@ -541,6 +569,7 @@
     <div class="actions reveal">
       <a href="#contact" class="btn solid">Contact Me</a>
       <a href="#projects" class="btn outline">View Projects</a>
+      <button type="button" class="btn outline cvbtn" id="cvBtn" aria-haspopup="dialog">Download CV</button>
     </div>
     <div class="hero-links reveal">
       <a href="tel:+8801786993989">+880 1786-993989</a>
@@ -855,6 +884,26 @@
   </div>
 </div>
 
+<div class="cv" id="cvModal" role="dialog" aria-modal="true" aria-labelledby="cvTitle" aria-hidden="true">
+  <div class="cv-win">
+    <div class="cv-bar">
+      <span class="tdot r"></span><span class="tdot y"></span><span class="tdot g"></span>
+      <span class="cv-title" id="cvTitle">DOWNLOAD CV</span>
+      <button class="cv-x" id="cvX" type="button" aria-label="Close">&times;</button>
+    </div>
+    <div class="cv-body">
+      <a class="cv-row" href="cv/Habibur_Rahman_CV_Gulf.pdf" download>
+        <span class="cv-name">Gulf Format</span>
+        <span class="cv-desc">With photo, for Gulf employers</span>
+      </a>
+      <a class="cv-row" href="cv/Habibur_Rahman_CV_International.pdf" download>
+        <span class="cv-name">International (ATS)</span>
+        <span class="cv-desc">ATS-safe, no photo</span>
+      </a>
+    </div>
+  </div>
+</div>
+
 <script>
 /* Boot splash */
 (function(){
@@ -1117,6 +1166,34 @@
     setBar('fwMem','fwMemV', 42+Math.floor(Math.random()*18));
     setBar('fwNet','fwNetV', 48+Math.floor(Math.random()*34));
   }, 2200); }
+})();
+</script>
+<script>
+/* CV download modal */
+(function(){
+  var btn=document.getElementById('cvBtn'), modal=document.getElementById('cvModal'),
+      x=document.getElementById('cvX');
+  if(!btn||!modal||!x) return;
+  var rows=modal.querySelectorAll('.cv-row');
+  function open(){
+    modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
+    setTimeout(function(){ if(rows[0]) rows[0].focus(); },80);
+  }
+  function close(){
+    modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); btn.focus();
+  }
+  btn.addEventListener('click', open);
+  x.addEventListener('click', close);
+  modal.addEventListener('click', function(e){ if(e.target===modal) close(); });
+  document.addEventListener('keydown', function(e){
+    if(!modal.classList.contains('open')) return;
+    if(e.key==='Escape'){ close(); return; }
+    if(e.key==='Tab'){
+      var f=[rows[0],rows[1],x].filter(Boolean), first=f[0], last=f[f.length-1];
+      if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+      else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+    }
+  });
 })();
 </script>
 </body>
