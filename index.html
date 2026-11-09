@@ -483,11 +483,14 @@
   @media(max-width:1150px){.floatwin{display:none;}}
 
   /* Robot bot button */
-  .botbtn{position:fixed; right:20px; bottom:calc(20px + env(safe-area-inset-bottom,0px)); z-index:80; width:64px; height:64px; border-radius:50%; background:var(--surface); border:2px solid var(--em); cursor:pointer; display:flex; align-items:center; justify-content:center; overflow:hidden; padding:0; box-shadow:0 10px 26px rgba(5,150,105,.45); animation:botbob 3s ease-in-out infinite; transition:left 2.8s ease-in-out, top 2.8s ease-in-out, transform .2s;}
+  .botbtn{position:fixed; right:20px; bottom:calc(20px + env(safe-area-inset-bottom,0px)); z-index:80; width:76px; height:76px; border-radius:50%; background:var(--surface); border:2px solid var(--em); cursor:pointer; display:flex; align-items:center; justify-content:center; overflow:hidden; padding:0; box-shadow:0 10px 26px rgba(5,150,105,.45); animation:flybob 2.6s ease-in-out infinite; transition:left 2.8s ease-in-out, top 2.8s ease-in-out, transform .2s;}
   .botbtn:hover{transform:scale(1.08);}
-  @keyframes botbob{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
-  .botbtn img{width:100%; height:100%; object-fit:cover; display:block; pointer-events:none;}
+  @keyframes flybob{0%,100%{transform:translateY(0) rotate(-1.5deg);}50%{transform:translateY(-7px) rotate(1.5deg);}}
+  .botbtn img{width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; transition:transform .35s ease, opacity .35s ease;}
   .botbtn .on{position:absolute; right:2px; top:2px; width:12px; height:12px; border-radius:50%; background:#22C55E; border:2px solid var(--on-em);}
+  .botbtn.flip img{transform:scaleX(-1);}
+  .botbtn.landing{transition:left 1.1s cubic-bezier(.55,0,.85,.36), top 1.1s cubic-bezier(.55,0,.85,.36), transform .2s; animation:none;}
+  .botbtn.landed{animation:none;}
 
   /* Terminal modal */
   .term{position:fixed; inset:0; z-index:100; background:rgba(2,6,4,.6); display:flex; align-items:center; justify-content:center; padding:20px; opacity:0; visibility:hidden; transition:opacity .25s,visibility .25s;}
@@ -1659,7 +1662,7 @@
   }
   function open(){ term.classList.add('open'); term.setAttribute('aria-hidden','false'); if(!booted){ boot(); booted=true; } setTimeout(function(){ inp.focus(); },80); }
   function close(){ term.classList.remove('open'); term.setAttribute('aria-hidden','true'); btn.focus(); }
-  btn.addEventListener('click', open);
+  btn.addEventListener('click', function(){ if(window.unicornLand){ window.unicornLand(open); } else { open(); } });
   x.addEventListener('click', close);
   term.addEventListener('click', function(e){ if(e.target===term) close(); });
   document.addEventListener('keydown', function(e){ if(e.key==='Escape' && term.classList.contains('open')) close(); });
@@ -2418,10 +2421,9 @@
 })();
 </script>
 <script>
-/* Roaming unicorn mascot: the terminal bot button, now a unicorn that wanders the page.
-   Click still opens the terminal (existing handler on #botBtn). Glides to random
-   viewport spots, pauses on hover and while the terminal is open; theme swaps the
-   unicorn (light theme -> dark unicorn, dark theme -> white unicorn). */
+/* Flying unicorn mascot: the terminal bot button, now a winged 3D unicorn that flies
+   around the page. Click -> it lands (descends to the bottom-right, folds its wings)
+   and the terminal opens; closing the terminal makes it take off again. */
 (function(){
   var btn=document.getElementById('botBtn');
   var img=document.getElementById('botImg');
@@ -2430,26 +2432,38 @@
   var root=document.documentElement;
   var reduced=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* theme swap */
-  function sync(){
+  var landed=false, landing=false, hover=false;
+
+  function fileFor(){
     var dark=root.getAttribute('data-theme')==='dark';
-    var want=dark?'images/unicorn-white.png':'images/unicorn-dark.png';
-    if(img.getAttribute('src')!==want) img.setAttribute('src',want);
+    if(dark) return landed?'images/unicorn-white-land.png':'images/unicorn-white.png';
+    return landed?'images/unicorn-dark-land.png':'images/unicorn-dark.png';
   }
+  /* crossfade image swap */
+  function setImg(src){
+    if(img.getAttribute('src')===src) return;
+    img.style.opacity='0';
+    setTimeout(function(){ img.setAttribute('src',src); img.style.opacity='1'; }, 320);
+  }
+  function sync(){ setImg(fileFor()); }
   sync();
   new MutationObserver(sync).observe(root,{attributes:true,attributeFilter:['data-theme']});
 
-  if(reduced) return; /* static bottom-right, no roaming */
+  if(reduced) return; /* static bottom-right; click opens the terminal directly */
 
-  var M=16, hover=false;
+  var M=16;
   function place(x,y){ btn.style.left=x+'px'; btn.style.top=y+'px'; btn.style.right='auto'; btn.style.bottom='auto'; }
+  function landSpot(){ return { x: Math.max(M, window.innerWidth-96), y: Math.max(M, window.innerHeight-96) }; }
+
   function roam(){
-    if(document.hidden) return;
+    if(document.hidden || landed || landing) return;
     if(term && term.classList.contains('open')) return;
     if(hover) return;
-    var w=btn.offsetWidth||64, h=btn.offsetHeight||64;
+    var w=btn.offsetWidth||76, h=btn.offsetHeight||76;
     var maxX=Math.max(M, window.innerWidth-w-M), maxY=Math.max(M, window.innerHeight-h-M);
+    var cur=btn.getBoundingClientRect().left;
     var x=M+Math.random()*(maxX-M), y=M+Math.random()*(maxY-M);
+    btn.classList.toggle('flip', x<cur); /* face the direction it flies */
     place(x,y);
   }
   /* anchor at the current (bottom-right) spot first so the first move doesn't jump */
@@ -2460,10 +2474,36 @@
   document.addEventListener('visibilitychange', function(){ if(!document.hidden) roam(); });
   function loop(){
     roam();
-    setTimeout(loop, 4200+Math.random()*2200); /* glide ~2.8s + pause ~1.4-3.6s */
+    setTimeout(loop, 4200+Math.random()*2200);
   }
-  setTimeout(loop, 2500); /* first wander after 2.5s */
+  setTimeout(loop, 2500);
+
+  /* landing: descend to the bottom-right, fold wings, then open the terminal */
+  window.unicornLand=function(done){
+    if(landed || landing){ done(); return; }
+    landing=true;
+    btn.classList.add('landing');
+    var s=landSpot();
+    place(s.x, s.y);
+    setTimeout(function(){ landed=true; setImg(fileFor()); }, 550); /* wings fold mid-descent */
+    setTimeout(function(){
+      landing=false;
+      btn.classList.remove('landing');
+      btn.classList.add('landed');
+      done();
+    }, 1150);
+  };
+  /* takeoff: when the terminal closes, unfold wings and fly off again */
+  new MutationObserver(function(){
+    if(term.classList.contains('open')) return;
+    if(!landed) return;
+    landed=false;
+    btn.classList.remove('landed');
+    setImg(fileFor());
+    setTimeout(roam, 700);
+  }).observe(term,{attributes:true,attributeFilter:['class']});
 })();
 </script>
+
 </body>
 </html>
