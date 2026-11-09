@@ -311,6 +311,20 @@
   .orb-tip b{font-weight:500; font-size:.78rem; color:var(--text);}
   .orb-tip span{font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; color:var(--em);}
   [data-theme="dark"] .orb-tip span{color:var(--em-d);}
+
+  /* SKILLS — long-pill tooltips (shared #skillTip) */
+  .sgroup .pill.has-tip{cursor:pointer; position:relative;}
+  .sgroup .pill.has-tip:hover,
+  .sgroup .pill.has-tip:focus-visible,
+  .sgroup .pill.has-tip.on{color:var(--em); border-color:var(--em); background:var(--em-soft); box-shadow:0 0 0 3px var(--em-soft), 0 0 18px rgba(5,150,105,.45); outline:none;}
+  [data-theme="dark"] .sgroup .pill.has-tip:hover,
+  [data-theme="dark"] .sgroup .pill.has-tip:focus-visible,
+  [data-theme="dark"] .sgroup .pill.has-tip.on{color:var(--em-d); background:var(--em-soft); box-shadow:0 0 0 3px var(--em-soft), 0 0 22px rgba(16,185,129,.6);}
+  .skill-tip{position:absolute; left:0; top:0; z-index:6; width:max-content; max-width:min(280px, calc(100vw - 32px)); padding:8px 12px; background:var(--surface); border:1px solid var(--em); border-radius:10px; box-shadow:var(--shadow-h); font-family:var(--mono); white-space:normal; pointer-events:none; opacity:0; visibility:hidden; transition:opacity .15s;}
+  .skill-tip.show{opacity:1; visibility:visible;}
+  .skill-tip b{display:block; font-weight:500; font-size:.72rem; line-height:1.45; letter-spacing:.01em; color:var(--text);}
+  [data-theme="dark"] .skill-tip{border-color:var(--em-d); box-shadow:var(--shadow-h), 0 0 18px rgba(16,185,129,.22);}
+  [data-theme="dark"] .skill-tip b{color:var(--text);}
   /* Safety net: below 820px the orbital is never shown and the flat grid always is */
   @media(max-width:819px){
     .orbit{display:none !important;}
@@ -897,6 +911,7 @@
       </div>
     </div>
   </div>
+    <div class="skill-tip" id="skillTip" role="tooltip"><b></b></div>
 </section>
 
 <!-- PROJECTS -->
@@ -1333,6 +1348,106 @@
   window.addEventListener('resize',apply);
 
   apply();
+})();
+</script>
+<script>
+/* Skill pill tooltips (16 long pills only; shared #skillTip) */
+(function(){
+  var sec=document.getElementById('skills'), tip=document.getElementById('skillTip');
+  if(!sec||!tip) return;
+  var label=tip.querySelector('b');
+
+  var DESC={
+    "IT Infrastructure Management":"9+ yrs leading IT operations across NDE group companies, 1000+ users",
+    "Firewall, Switch & Access Point deployment":"Install, configure and support routers, switches & access points",
+    "Data Center & Server Infrastructure":"HCI (HP SimpliVity + vSphere) for the NDE data center",
+    "Hardware/Software Lifecycle Management":"PCs, laptops, printers, UPS — install, diagnose, service",
+    "Cybersecurity & Disaster Recovery Planning":"Backups, restore & recovery planning for Head Office and projects",
+    "Fortinet Firewall / UTM (1000+ users)":"FortiGate UTM: policies, VPN, web filtering, threat prevention",
+    "Kaspersky endpoint security (500+ users)":"Antivirus server + endpoint protection for 500+ users",
+    "IP CCTV & Biometric Access Systems":"IP CCTV surveillance and biometric access control",
+    "Google Workspace, Zimbra, Barracuda":"Mail servers + email security (Zimbra, Barracuda)",
+    "Active Directory & File Servers":"Domain, user and file services on Windows Server",
+    "Windows IIS & SQL Database servers":"Hosts corporate domains & websites on IIS + SQL Server",
+    "VMware ESXi / vSphere virtualization":"ESXi install, VM lifecycle, migration, monitoring & troubleshooting",
+    "Project & Team Leadership":"Leads IT operations and support staff across the group",
+    "Budgeting & Vendor SLA Management":"IT budgeting, procurement, vendor relations & contract compliance",
+    "IT Budget Management & Purchase":"Budget control, procurement & vendor management",
+    "Cross-functional collaboration":"IT × customer-service collaboration; 20+ critical issues resolved"
+  };
+
+  /* Only the four long-pill groups; the tools group is never touched */
+  var pills=[].slice.call(sec.querySelectorAll('.sgroup:not([data-g="tools"]) .pill')).filter(function(p){
+    return Object.prototype.hasOwnProperty.call(DESC,(p.textContent||'').trim());
+  });
+  if(!pills.length) return;
+
+  var pinned=null, active=null;
+
+  pills.forEach(function(p){
+    p.classList.add('has-tip');
+    p.setAttribute('tabindex','0');
+    p.setAttribute('aria-describedby','skillTip');
+  });
+
+  function place(pill){
+    var s=sec.getBoundingClientRect(), c=pill.getBoundingClientRect();
+    var tw=tip.offsetWidth, th=tip.offsetHeight, m=8;
+    var vw=document.documentElement.clientWidth;
+    var minX=Math.max(m, m-s.left);
+    var maxX=Math.min(s.width-tw-m, vw-s.left-tw-m);
+    var x=c.left-s.left+c.width/2-tw/2;
+    x=Math.max(minX, Math.min(x, Math.max(minX,maxX)));
+    var y=c.top-s.top-th-8;                       /* above the pill */
+    if(y<m || c.top-th-8<m){ y=c.bottom-s.top+8; } /* flip below if no room */
+    tip.style.left=Math.round(x)+'px';
+    tip.style.top=Math.round(y)+'px';
+  }
+
+  function show(pill){
+    var d=DESC[(pill.textContent||'').trim()];
+    if(!d||pill.offsetParent===null){ hide(); return; }
+    label.textContent=d;
+    tip.classList.add('show');
+    place(pill);
+    active=pill;
+  }
+  function hide(){
+    tip.classList.remove('show');
+    active=null;
+  }
+  function unpin(){
+    if(pinned){ pinned.classList.remove('on'); pinned=null; }
+    hide();
+  }
+  function restore(){
+    if(pinned) show(pinned); else hide();
+  }
+
+  pills.forEach(function(p){
+    p.addEventListener('mouseenter',function(){ show(p); });
+    p.addEventListener('mouseleave',restore);
+    p.addEventListener('focus',function(){ show(p); });
+    p.addEventListener('blur',restore);
+    p.addEventListener('click',function(e){
+      e.stopPropagation();
+      if(pinned===p){ unpin(); return; }
+      if(pinned) pinned.classList.remove('on');
+      pinned=p; p.classList.add('on'); show(p);
+    });
+    p.addEventListener('keydown',function(e){
+      if(e.key==='Enter'||e.key===' '){ e.preventDefault(); p.click(); }
+    });
+  });
+
+  document.addEventListener('click',function(e){
+    if(!e.target.closest('.pill.has-tip')) unpin();
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape') unpin();
+  });
+
+  window.addEventListener('resize',function(){ if(active) show(active); });
 })();
 </script>
 <script>
