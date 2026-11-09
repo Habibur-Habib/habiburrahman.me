@@ -288,6 +288,35 @@
   .sgroup.wide{grid-column:1/-1;}
   .sgroup .pill{font-family:var(--sans); font-size:.85rem;}
   .sgroup.wide .pill{font-family:var(--mono); font-size:.76rem;}
+  /* SKILLS ORBITAL */
+  .orbit{display:block; width:100%; max-width:100%; height:540px; max-height:560px; margin:0 auto 8px;}
+  .orbit[hidden]{display:none;}
+  .orb-stage{position:relative; width:540px; max-width:100%; height:540px; margin:0 auto;}
+  .orb-ring{position:absolute; left:50%; top:50%; border:1px dashed var(--line); border-radius:50%; transform:translate(-50%,-50%); pointer-events:none;}
+  .orb-ring.r1{width:270px; height:270px; border-color:var(--faint); opacity:.45;}
+  .orb-ring.r2{width:440px; height:440px;}
+  .orb-core{position:absolute; left:50%; top:50%; width:172px; transform:translate(-50%,-50%); text-align:center; padding:16px 12px; background:var(--surface); border:1px solid var(--em); border-radius:14px; box-shadow:var(--shadow-h), 0 0 0 4px var(--em-soft); z-index:2;}
+  .orb-core-t{font-family:var(--mono); font-weight:500; font-size:.9rem; letter-spacing:.12em; color:var(--em);}
+  .orb-core-s{margin-top:6px; font-family:var(--mono); font-size:.62rem; letter-spacing:.04em; line-height:1.45; color:var(--faint);}
+  .orb-chip{position:absolute; left:50%; top:50%; width:68px; height:68px; margin:-34px 0 0 -34px; padding:0; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-size:.6rem; letter-spacing:-.02em; white-space:nowrap; color:var(--muted); background:var(--chip); border:1px solid var(--line); box-shadow:var(--shadow); cursor:pointer;
+    transform:rotate(var(--a)) translate(var(--r)) rotate(calc(-1 * var(--a))); transition:color .2s,border-color .2s,background .2s,box-shadow .2s; z-index:1;}
+  .orb-chip:hover,.orb-chip:focus-visible,.orb-chip.on{color:var(--em); border-color:var(--em); background:var(--em-soft); box-shadow:0 0 0 3px var(--em-soft), 0 0 18px rgba(5,150,105,.45); outline:none; z-index:3;}
+  [data-theme="dark"] .orb-chip{background:var(--surface);}
+  [data-theme="dark"] .orb-chip:hover,[data-theme="dark"] .orb-chip:focus-visible,[data-theme="dark"] .orb-chip.on{color:var(--em-d); background:var(--em-soft); box-shadow:0 0 0 3px var(--em-soft), 0 0 22px rgba(16,185,129,.6);}
+  [data-theme="dark"] .orb-ring{border-color:var(--line);}
+  [data-theme="dark"] .orb-core{box-shadow:var(--shadow-h), 0 0 26px rgba(16,185,129,.22);}
+  .orb-tip{position:absolute; left:0; top:0; z-index:5; display:flex; flex-direction:column; gap:2px; padding:8px 12px; background:var(--surface); border:1px solid var(--em); border-radius:10px; box-shadow:var(--shadow-h); font-family:var(--mono); white-space:nowrap; pointer-events:none; opacity:0; visibility:hidden; transition:opacity .15s;}
+  .orb-tip.show{opacity:1; visibility:visible;}
+  .orb-tip b{font-weight:500; font-size:.78rem; color:var(--text);}
+  .orb-tip span{font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; color:var(--em);}
+  [data-theme="dark"] .orb-tip span{color:var(--em-d);}
+  /* Safety net: below 820px the orbital is never shown and the flat grid always is */
+  @media(max-width:819px){
+    .orbit{display:none !important;}
+    .sgrid.has-orbit{display:grid !important;}
+  }
+  .sgrid.has-orbit{display:none;}
 
   /* SLIDER */
   .slider-viewport{overflow:hidden; border:1px solid var(--line); border-radius:16px; background:var(--surface); box-shadow:var(--shadow);}
@@ -773,6 +802,33 @@
       <button class="fbtn" type="button" data-f="lead">Leadership &amp; Ops</button>
       <button class="fbtn" type="button" data-f="tools">Tools &amp; Platforms</button>
     </div>
+<div id="skillOrbit" class="orbit" hidden>
+      <div class="orb-stage">
+        <span class="orb-ring r1" aria-hidden="true"></span>
+        <span class="orb-ring r2" aria-hidden="true"></span>
+        <div class="orb-core">
+          <div class="orb-core-t">SKILLS.EXE</div>
+          <div class="orb-core-s">16 skills · 14 technologies</div>
+        </div>
+        <!-- Inner ring (5) -->
+        <button type="button" class="orb-chip" style="--a:-90deg;--r:135px" aria-label="Fortinet, Tools &amp; Platforms">Fortinet</button>
+        <button type="button" class="orb-chip" style="--a:-18deg;--r:135px" aria-label="VMware, Tools &amp; Platforms">VMware</button>
+        <button type="button" class="orb-chip" style="--a:54deg;--r:135px" aria-label="Zimbra, Tools &amp; Platforms">Zimbra</button>
+        <button type="button" class="orb-chip" style="--a:126deg;--r:135px" aria-label="Cisco, Tools &amp; Platforms">Cisco</button>
+        <button type="button" class="orb-chip" style="--a:198deg;--r:135px" aria-label="Linux, Tools &amp; Platforms">Linux</button>
+        <!-- Outer ring (9) -->
+        <button type="button" class="orb-chip" style="--a:-70deg;--r:220px" aria-label="FortiGate, Tools &amp; Platforms">FortiGate</button>
+        <button type="button" class="orb-chip" style="--a:-30deg;--r:220px" aria-label="VPN, Tools &amp; Platforms">VPN</button>
+        <button type="button" class="orb-chip" style="--a:10deg;--r:220px" aria-label="UTM, Tools &amp; Platforms">UTM</button>
+        <button type="button" class="orb-chip" style="--a:50deg;--r:220px" aria-label="ESXi, Tools &amp; Platforms">ESXi</button>
+        <button type="button" class="orb-chip" style="--a:90deg;--r:220px" aria-label="vSphere, Tools &amp; Platforms">vSphere</button>
+        <button type="button" class="orb-chip" style="--a:130deg;--r:220px" aria-label="HCI, Tools &amp; Platforms">HCI</button>
+        <button type="button" class="orb-chip" style="--a:170deg;--r:220px" aria-label="Barracuda, Tools &amp; Platforms">Barracuda</button>
+        <button type="button" class="orb-chip" style="--a:210deg;--r:220px" aria-label="VLAN, Tools &amp; Platforms">VLAN</button>
+        <button type="button" class="orb-chip" style="--a:250deg;--r:220px" aria-label="CCTV, Tools &amp; Platforms">CCTV</button>
+        <div class="orb-tip" id="orbTip" role="tooltip"><b></b><span>Tools &amp; Platforms</span></div>
+      </div>
+    </div>
     <div class="sgrid">
       <div class="sgroup reveal" data-g="infra">
         <h3>Infrastructure &amp; Network</h3>
@@ -1152,13 +1208,64 @@
 (function(){
   var bar=document.getElementById('filters'); if(!bar) return;
   var btns=bar.querySelectorAll('.fbtn'), groups=document.querySelectorAll('.sgroup');
+  var grid=document.querySelector('#skills .sgrid');
+  var orbit=document.getElementById('skillOrbit');
+  var tip=document.getElementById('orbTip');
+  var chips=orbit?orbit.querySelectorAll('.orb-chip'):[];
+  var stage=orbit?orbit.querySelector('.orb-stage'):null;
+  var pinned=null, current='all';
+
+  function wide(){ return window.innerWidth>=820; }
+
+  function hideTip(){
+    if(tip) tip.classList.remove('show');
+    chips.forEach(function(c){ c.classList.remove('on'); });
+    pinned=null;
+  }
+  function showTip(chip){
+    if(!tip||!stage||!orbit||orbit.hidden) return;
+    tip.querySelector('b').textContent=chip.textContent;
+    tip.classList.add('show');
+    var s=stage.getBoundingClientRect(), c=chip.getBoundingClientRect();
+    var tw=tip.offsetWidth, th=tip.offsetHeight;
+    var x=c.left-s.left+c.width/2-tw/2;
+    x=Math.max(0,Math.min(x,s.width-tw));
+    var y=c.top-s.top-th-8;
+    if(y<0) y=c.bottom-s.top+8;
+    tip.style.left=x+'px'; tip.style.top=y+'px';
+  }
+
+  function apply(){
+    var showOrbit=!!orbit && current==='all' && wide();
+    if(orbit) orbit.hidden=!showOrbit;
+    if(grid) grid.classList.toggle('has-orbit',showOrbit);
+    groups.forEach(function(g){ g.classList.toggle('hide', current!=='all' && g.getAttribute('data-g')!==current); });
+    if(!showOrbit) hideTip();
+  }
+
   btns.forEach(function(b){
     b.addEventListener('click',function(){
-      var f=b.getAttribute('data-f');
+      current=b.getAttribute('data-f');
       btns.forEach(function(x){ x.classList.toggle('on',x===b); });
-      groups.forEach(function(g){ g.classList.toggle('hide', f!=='all' && g.getAttribute('data-g')!==f); });
+      apply();
     });
   });
+
+  chips.forEach(function(chip){
+    chip.addEventListener('mouseenter',function(){ if(!pinned) showTip(chip); });
+    chip.addEventListener('focus',function(){ if(!pinned) showTip(chip); });
+    chip.addEventListener('mouseleave',function(){ if(!pinned) tip.classList.remove('show'); });
+    chip.addEventListener('blur',function(){ if(!pinned) tip.classList.remove('show'); });
+    chip.addEventListener('click',function(e){
+      e.stopPropagation();
+      if(pinned===chip){ hideTip(); return; }
+      hideTip(); pinned=chip; chip.classList.add('on'); showTip(chip);
+    });
+  });
+  document.addEventListener('click',function(){ if(pinned) hideTip(); });
+  window.addEventListener('resize',apply);
+
+  apply();
 })();
 </script>
 <script>
