@@ -390,7 +390,8 @@
   .s-dot{width:8px; height:8px; padding:0; border:none; border-radius:8px; background:var(--diagram-line); cursor:pointer; transition:width .25s,background .25s;}
   .s-dot.active{width:26px; background:var(--em);}
   .cert-slide{display:grid; grid-template-columns:minmax(0,1fr); gap:26px; align-items:center;}
-  .cert-fig{margin:0; position:relative; width:100%; aspect-ratio:4/3; max-height:340px; border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--chip);}
+  .cert-fig{margin:0; position:relative; width:100%; aspect-ratio:4/3; max-height:340px; border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--chip); transition:transform .25s,box-shadow .25s;}
+  .cert-slide:hover .cert-fig{transform:translateY(-4px); box-shadow:var(--shadow-h);}
   .cert-fig img{width:100%; height:100%; object-fit:contain; display:block;}
   .cert-ph{display:none; position:absolute; inset:0; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:24px; text-align:center; color:var(--muted); font-family:var(--disp); font-weight:600; font-size:1.05rem; line-height:1.35; background:var(--chip);}
   .cert-ph svg{width:40px; height:40px; color:var(--em);}
