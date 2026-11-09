@@ -666,6 +666,31 @@
   .ct-row{grid-template-columns:1fr; gap:2px;}
 }
 
+/* Typing indicator (message field only) */
+.field:has(> #typingInd){position:relative;}
+.typing-ind{
+  position:absolute; top:100%; right:0; margin-top:3px;
+  display:inline-flex; align-items:baseline; gap:0;
+  font-family:var(--mono); font-size:.62rem; line-height:1; letter-spacing:.1em;
+  color:var(--faint); white-space:nowrap;
+  opacity:0; visibility:hidden; pointer-events:none;
+  transition:opacity .25s ease, visibility 0s linear .25s;
+}
+.typing-ind.on{opacity:1; visibility:visible; transition:opacity .25s ease, visibility 0s;}
+.typing-ind i{
+  display:inline-block; width:3px; height:3px; margin-left:3px; border-radius:50%;
+  background:var(--em); animation:typingDot 1s ease-in-out infinite;
+}
+.typing-ind i:nth-child(2){animation-delay:.15s;}
+.typing-ind i:nth-child(3){animation-delay:.3s;}
+@keyframes typingDot{0%,60%,100%{opacity:.25; transform:translateY(0);}30%{opacity:1; transform:translateY(-2px);}}
+[data-theme="dark"] .typing-ind{color:var(--muted);}
+[data-theme="dark"] .typing-ind i{background:var(--em-d);}
+@media (prefers-reduced-motion: reduce){
+  .typing-ind,.typing-ind.on{transition:none;}
+  .typing-ind i{animation:none; opacity:.8;}
+}
+
 </style>
 </head>
 <body>
@@ -1088,7 +1113,7 @@
       <form class="fcard reveal" id="contactForm" autocomplete="on">
         <div class="field"><label for="fName">Name</label><input id="fName" name="name" type="text" required autocomplete="name"></div>
         <div class="field"><label for="fEmail">Email</label><input id="fEmail" name="email" type="email" required autocomplete="email"></div>
-        <div class="field"><label for="fMsg">Message <em id="count">0/500</em></label><textarea id="fMsg" name="message" maxlength="500" required></textarea></div>
+        <div class="field"><label for="fMsg">Message <em id="count">0/500</em></label><textarea id="fMsg" name="message" maxlength="500" required></textarea><span class="typing-ind" id="typingInd" aria-hidden="true">Typing<i></i><i></i><i></i></span></div>
         <button type="submit" class="btn solid">Send Message</button>
       </form>
     </div>
@@ -2120,6 +2145,17 @@
       else if(e.shiftKey && a===first){ e.preventDefault(); last.focus(); }
       else if(!e.shiftKey && a===last){ e.preventDefault(); first.focus(); }
     }
+  });
+})();
+</script>
+<script>
+(function(){
+  var msg=document.getElementById('fMsg'), ind=document.getElementById('typingInd'), t=null;
+  if(!msg||!ind) return;
+  msg.addEventListener('input',function(){
+    ind.classList.add('on');
+    clearTimeout(t);
+    t=setTimeout(function(){ ind.classList.remove('on'); },1000);
   });
 })();
 </script>
