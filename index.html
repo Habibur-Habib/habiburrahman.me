@@ -318,6 +318,22 @@
   }
   .sgrid.has-orbit{display:none;}
 
+  /* SKILLS ORBITAL — slow rotation (added 2026-11-09, user asked "ring ki gurbe na") */
+  @property --orb1 { syntax:'<angle>'; inherits:false; initial-value:0deg; }
+  @property --orb2 { syntax:'<angle>'; inherits:false; initial-value:0deg; }
+  @keyframes orb1 { to { --orb1:360deg; } }
+  @keyframes orb2 { to { --orb2:-360deg; } }
+  @keyframes orb-ring-spin { from { transform:translate(-50%,-50%) rotate(0deg); } to { transform:translate(-50%,-50%) rotate(360deg); } }
+  @keyframes orb-ring-spin-rev { from { transform:translate(-50%,-50%) rotate(0deg); } to { transform:translate(-50%,-50%) rotate(-360deg); } }
+  .orb-chip.orb-in{transform:rotate(calc(var(--a) + var(--orb1,0deg))) translate(var(--r)) rotate(calc(-1 * var(--a) - var(--orb1,0deg))); animation:orb1 60s linear infinite;}
+  .orb-chip.orb-out{transform:rotate(calc(var(--a) + var(--orb2,0deg))) translate(var(--r)) rotate(calc(-1 * var(--a) - var(--orb2,0deg))); animation:orb2 90s linear infinite;}
+  .orb-ring.r1{animation:orb-ring-spin 60s linear infinite;}
+  .orb-ring.r2{animation:orb-ring-spin-rev 90s linear infinite;}
+  .orb-stage:hover .orb-chip,.orb-stage:hover .orb-ring{animation-play-state:paused;}
+  @media (prefers-reduced-motion: reduce){
+    .orb-chip,.orb-ring{animation:none !important;}
+  }
+
   /* SLIDER */
   .slider-viewport{overflow:hidden; border:1px solid var(--line); border-radius:16px; background:var(--surface); box-shadow:var(--shadow);}
   .slider-track{display:flex; transition:transform .55s ease;}
@@ -811,21 +827,21 @@
           <div class="orb-core-s">16 skills · 14 technologies</div>
         </div>
         <!-- Inner ring (5) -->
-        <button type="button" class="orb-chip" style="--a:-90deg;--r:135px" aria-label="Fortinet, Tools &amp; Platforms">Fortinet</button>
-        <button type="button" class="orb-chip" style="--a:-18deg;--r:135px" aria-label="VMware, Tools &amp; Platforms">VMware</button>
-        <button type="button" class="orb-chip" style="--a:54deg;--r:135px" aria-label="Zimbra, Tools &amp; Platforms">Zimbra</button>
-        <button type="button" class="orb-chip" style="--a:126deg;--r:135px" aria-label="Cisco, Tools &amp; Platforms">Cisco</button>
-        <button type="button" class="orb-chip" style="--a:198deg;--r:135px" aria-label="Linux, Tools &amp; Platforms">Linux</button>
+        <button type="button" class="orb-chip orb-in" style="--a:-90deg;--r:135px" aria-label="Fortinet, Tools &amp; Platforms">Fortinet</button>
+        <button type="button" class="orb-chip orb-in" style="--a:-18deg;--r:135px" aria-label="VMware, Tools &amp; Platforms">VMware</button>
+        <button type="button" class="orb-chip orb-in" style="--a:54deg;--r:135px" aria-label="Zimbra, Tools &amp; Platforms">Zimbra</button>
+        <button type="button" class="orb-chip orb-in" style="--a:126deg;--r:135px" aria-label="Cisco, Tools &amp; Platforms">Cisco</button>
+        <button type="button" class="orb-chip orb-in" style="--a:198deg;--r:135px" aria-label="Linux, Tools &amp; Platforms">Linux</button>
         <!-- Outer ring (9) -->
-        <button type="button" class="orb-chip" style="--a:-70deg;--r:220px" aria-label="FortiGate, Tools &amp; Platforms">FortiGate</button>
-        <button type="button" class="orb-chip" style="--a:-30deg;--r:220px" aria-label="VPN, Tools &amp; Platforms">VPN</button>
-        <button type="button" class="orb-chip" style="--a:10deg;--r:220px" aria-label="UTM, Tools &amp; Platforms">UTM</button>
-        <button type="button" class="orb-chip" style="--a:50deg;--r:220px" aria-label="ESXi, Tools &amp; Platforms">ESXi</button>
-        <button type="button" class="orb-chip" style="--a:90deg;--r:220px" aria-label="vSphere, Tools &amp; Platforms">vSphere</button>
-        <button type="button" class="orb-chip" style="--a:130deg;--r:220px" aria-label="HCI, Tools &amp; Platforms">HCI</button>
-        <button type="button" class="orb-chip" style="--a:170deg;--r:220px" aria-label="Barracuda, Tools &amp; Platforms">Barracuda</button>
-        <button type="button" class="orb-chip" style="--a:210deg;--r:220px" aria-label="VLAN, Tools &amp; Platforms">VLAN</button>
-        <button type="button" class="orb-chip" style="--a:250deg;--r:220px" aria-label="CCTV, Tools &amp; Platforms">CCTV</button>
+        <button type="button" class="orb-chip orb-out" style="--a:-70deg;--r:220px" aria-label="FortiGate, Tools &amp; Platforms">FortiGate</button>
+        <button type="button" class="orb-chip orb-out" style="--a:-30deg;--r:220px" aria-label="VPN, Tools &amp; Platforms">VPN</button>
+        <button type="button" class="orb-chip orb-out" style="--a:10deg;--r:220px" aria-label="UTM, Tools &amp; Platforms">UTM</button>
+        <button type="button" class="orb-chip orb-out" style="--a:50deg;--r:220px" aria-label="ESXi, Tools &amp; Platforms">ESXi</button>
+        <button type="button" class="orb-chip orb-out" style="--a:90deg;--r:220px" aria-label="vSphere, Tools &amp; Platforms">vSphere</button>
+        <button type="button" class="orb-chip orb-out" style="--a:130deg;--r:220px" aria-label="HCI, Tools &amp; Platforms">HCI</button>
+        <button type="button" class="orb-chip orb-out" style="--a:170deg;--r:220px" aria-label="Barracuda, Tools &amp; Platforms">Barracuda</button>
+        <button type="button" class="orb-chip orb-out" style="--a:210deg;--r:220px" aria-label="VLAN, Tools &amp; Platforms">VLAN</button>
+        <button type="button" class="orb-chip orb-out" style="--a:250deg;--r:220px" aria-label="CCTV, Tools &amp; Platforms">CCTV</button>
         <div class="orb-tip" id="orbTip" role="tooltip"><b></b><span>Tools &amp; Platforms</span></div>
       </div>
     </div>
