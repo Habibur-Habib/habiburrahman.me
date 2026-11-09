@@ -516,6 +516,45 @@
   .pal-hint{display:none;}
 }
 
+/* ===== Project filters + detail modal ===== */
+#projFilters{margin-bottom:24px;}
+#projFilters .fbtn:focus-visible{outline:2px solid var(--em); outline-offset:2px;}
+[data-theme="dark"] #projFilters .fbtn:hover{border-color:var(--em-d); color:var(--em-d);}
+[data-theme="dark"] #projFilters .fbtn.on{background:var(--em); border-color:var(--em); color:var(--on-em);}
+
+.slide.pj-off{display:none;}
+#projTrack .slide{cursor:pointer;}
+#projTrack .slide:focus-visible{outline:2px solid var(--em); outline-offset:-4px; border-radius:16px;}
+
+.pj{position:fixed; inset:0; z-index:100; background:rgba(2,6,4,.6); display:flex; align-items:center; justify-content:center; padding:20px; opacity:0; visibility:hidden; transition:opacity .25s,visibility .25s;}
+.pj.open{opacity:1; visibility:visible;}
+.pj-win{width:min(560px,94vw); max-height:90vh; overflow:auto; background:var(--surface); border:1px solid var(--line); border-radius:14px; box-shadow:0 24px 70px rgba(0,0,0,.5); transform:translateY(10px) scale(.98); transition:transform .25s;}
+.pj.open .pj-win{transform:none;}
+.pj-bar{display:flex; align-items:center; gap:7px; padding:11px 14px; background:#111A16; border-bottom:1px solid #1E2F28; position:sticky; top:0;}
+.pj-title{margin:0 0 0 8px; font-family:var(--mono); font-weight:500; font-size:.8rem; letter-spacing:.06em; color:#E2E8F0; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.pj-title:focus{outline:none;}
+.pj-x{background:none; border:none; color:#9FB0A8; font-size:1.25rem; line-height:1; cursor:pointer; padding:2px 6px;}
+.pj-x:hover{color:#fff;}
+.pj-x:focus-visible,.pj-nav:focus-visible,.pj-cta:focus-visible{outline:2px solid var(--em); outline-offset:2px;}
+.pj-body{padding:22px 20px 20px;}
+.pj-desc{margin:0; color:var(--body); font-size:1rem; line-height:1.65;}
+.pj .tags{margin-top:16px;}
+.pj-foot{display:flex; align-items:center; flex-wrap:wrap; gap:10px; margin-top:22px; padding-top:16px; border-top:1px solid var(--line);}
+.pj-nav{font-family:var(--mono); font-size:.74rem; letter-spacing:.04em; color:var(--muted); background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:8px 16px; cursor:pointer; transition:all .2s;}
+.pj-nav:hover:not(:disabled){border-color:var(--em); color:var(--em);}
+.pj-nav:disabled{opacity:.4; cursor:default;}
+.pj-cta{margin-left:auto; font-family:var(--mono); font-size:.74rem; letter-spacing:.04em; color:var(--on-em); background:var(--em); border:1px solid var(--em); border-radius:999px; padding:8px 18px; text-decoration:none; transition:background .2s,border-color .2s;}
+.pj-cta:hover{background:var(--em-d); border-color:var(--em-d);}
+[data-theme="dark"] .pj-win{background:#0A0F0D; border-color:#1E2F28;}
+[data-theme="dark"] .pj-desc{color:#CBD5E1;}
+[data-theme="dark"] .pj-foot{border-top-color:#1E2F28;}
+[data-theme="dark"] .pj-nav{background:#111A16; border-color:#1E2F28; color:#9FB0A8;}
+[data-theme="dark"] .pj-nav:hover:not(:disabled){border-color:var(--em-d); color:var(--em-d);}
+@media(max-width:480px){
+  .pj-nav{flex:1;}
+  .pj-cta{flex:1 1 100%; margin-left:0; text-align:center;}
+}
+
 </style>
 </head>
 <body>
@@ -763,6 +802,13 @@
 <section id="projects" class="sec">
   <div class="wrap">
     <div class="sec-head reveal"><div class="eyebrow">//WHAT I’VE BUILT</div><h2>Projects</h2></div>
+<div class="filters reveal" id="projFilters" role="group" aria-label="Filter projects">
+      <button class="fbtn on" type="button" data-pf="all" aria-pressed="true">All</button>
+      <button class="fbtn" type="button" data-pf="Security" aria-pressed="false">Security</button>
+      <button class="fbtn" type="button" data-pf="Virtualization" aria-pressed="false">Virtualization</button>
+      <button class="fbtn" type="button" data-pf="Email" aria-pressed="false">Email</button>
+      <button class="fbtn" type="button" data-pf="Network" aria-pressed="false">Network</button>
+    </div>
     <div class="slider reveal" id="projSlider" role="region" aria-roledescription="carousel" aria-label="Project highlights">
       <div class="slider-viewport">
         <div class="slider-track" id="projTrack">
@@ -954,6 +1000,24 @@
   </div>
 </div>
 
+<div class="pj" id="projModal" role="dialog" aria-modal="true" aria-labelledby="pjTitle" aria-hidden="true">
+  <div class="pj-win">
+    <div class="pj-bar">
+      <span class="tdot r"></span><span class="tdot y"></span><span class="tdot g"></span>
+      <h2 class="pj-title" id="pjTitle" tabindex="-1"></h2>
+      <button class="pj-x" id="pjX" type="button" aria-label="Close">&times;</button>
+    </div>
+    <div class="pj-body" aria-live="polite">
+      <p class="pj-desc" id="pjDesc"></p>
+      <div class="tags" id="pjTags"></div>
+      <div class="pj-foot">
+        <button class="pj-nav" id="pjPrev" type="button">&larr; Prev</button>
+        <button class="pj-nav" id="pjNext" type="button">Next &rarr;</button>
+        <a class="pj-cta" id="pjMail" href="mailto:engrhabibur.rahman93@gmail.com">Discuss this project</a>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="pal" id="palette" role="dialog" aria-modal="true" aria-labelledby="palTitle" aria-hidden="true">
   <div class="pal-win">
     <div class="pal-bar">
@@ -1146,7 +1210,6 @@
     }
     go(0); start();
   }
-  init('projSlider','projTrack','projPrev','projNext',false);
   init('certSlider','certTrack','certPrev','certNext',true);
 })();
 </script>
@@ -1380,6 +1443,164 @@
       else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
     }
   });
+})();
+</script>
+<script>
+/* Projects slider (adapted from the existing init) + filter pills + detail modal */
+(function(){
+  var slider=document.getElementById('projSlider'); if(!slider) return;
+  var track=document.getElementById('projTrack');
+  var all=Array.prototype.slice.call(track.children);
+  var dots=slider.querySelectorAll('.s-dot');
+  var bar=document.getElementById('projFilters');
+  var modal=document.getElementById('projModal'),
+      tEl=document.getElementById('pjTitle'), dEl=document.getElementById('pjDesc'),
+      tagsEl=document.getElementById('pjTags'), mail=document.getElementById('pjMail'),
+      xBtn=document.getElementById('pjX'), pPrev=document.getElementById('pjPrev'),
+      pNext=document.getElementById('pjNext');
+  if(!track||!bar||!modal||!tEl||!dEl||!tagsEl||!mail||!xBtn||!pPrev||!pNext) return;
+
+  var reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var vis=all.slice(), i=0, mi=0, timer=null, hover=false, modalOpen=false, swipedAt=0;
+
+  /* categories derived ONLY from each slide's real tag chips */
+  var TAGCAT={Fortinet:'Security',FortiGate:'Security',VPN:'Security',UTM:'Security',CCTV:'Security',
+              VMware:'Virtualization',ESXi:'Virtualization',vSphere:'Virtualization',HCI:'Virtualization',
+              Zimbra:'Email',Barracuda:'Email',Linux:'Email',
+              Cisco:'Network',VLAN:'Network'};
+  var cats=all.map(function(s){
+    var out=[];
+    s.querySelectorAll('.tag').forEach(function(t){
+      var c=TAGCAT[t.textContent.trim()];
+      if(c && out.indexOf(c)===-1) out.push(c);
+    });
+    return out;
+  });
+
+  /* slider core: same logic as before, but over the visible set */
+  function go(k){
+    var m=vis.length; if(!m) return;
+    i=((k%m)+m)%m;
+    track.style.transform='translateX(-'+(i*100)+'%)';
+    for(var d=0; d<dots.length; d++){ dots[d].style.display = d<m ? '' : 'none'; }
+    for(d=0; d<m; d++){
+      dots[d].classList.toggle('active', d===i);
+      dots[d].setAttribute('aria-current', d===i ? 'true' : 'false');
+      vis[d].setAttribute('aria-hidden', d===i ? 'false' : 'true');
+      vis[d].setAttribute('tabindex', d===i ? '0' : '-1');
+      vis[d].setAttribute('aria-label', (d+1)+' of '+m);
+    }
+  }
+  function stop(){ clearInterval(timer); timer=null; }
+  function start(){
+    stop();
+    if(!reduce && !hover && !modalOpen && vis.length>1) timer=setInterval(function(){ go(i+1); }, 5000);
+  }
+
+  /* filter */
+  function setFilter(f){
+    var next=[];
+    for(var s=0; s<all.length; s++){ if(f==='all' || cats[s].indexOf(f)!==-1) next.push(all[s]); }
+    if(!next.length){ f='all'; next=all.slice(); }
+    vis=next;
+    for(s=0; s<all.length; s++){
+      var on=vis.indexOf(all[s])!==-1;
+      all[s].classList.toggle('pj-off', !on);
+      if(!on){ all[s].setAttribute('aria-hidden','true'); all[s].setAttribute('tabindex','-1'); }
+    }
+    track.style.transition='none';
+    go(0);
+    void track.offsetWidth;
+    track.style.transition='';
+    start();
+    bar.querySelectorAll('.fbtn').forEach(function(b){
+      var is=b.getAttribute('data-pf')===f;
+      b.classList.toggle('on', is);
+      b.setAttribute('aria-pressed', is ? 'true' : 'false');
+    });
+  }
+  bar.addEventListener('click', function(e){
+    var b=e.target.closest('.fbtn'); if(!b) return;
+    setFilter(b.getAttribute('data-pf'));
+  });
+
+  /* controls (same behaviour as the original init) */
+  document.getElementById('projPrev').addEventListener('click', function(){ go(i-1); start(); });
+  document.getElementById('projNext').addEventListener('click', function(){ go(i+1); start(); });
+  for(var d=0; d<dots.length; d++){ (function(k){ dots[k].addEventListener('click', function(){ go(k); start(); }); })(d); }
+  slider.addEventListener('pointerenter', function(e){ if(e.pointerType==='mouse'){ hover=true; stop(); } });
+  slider.addEventListener('pointerleave', function(e){ if(e.pointerType==='mouse'){ hover=false; start(); } });
+  slider.addEventListener('focusin', stop);
+  slider.addEventListener('focusout', function(){ start(); });
+  slider.addEventListener('keydown', function(e){
+    if(e.key==='ArrowLeft'){ go(i-1); start(); }
+    if(e.key==='ArrowRight'){ go(i+1); start(); }
+  });
+  var x0=null;
+  slider.addEventListener('touchstart', function(e){ x0=e.touches[0].clientX; stop(); }, {passive:true});
+  slider.addEventListener('touchend', function(e){
+    if(x0===null) return;
+    var dx=e.changedTouches[0].clientX-x0; x0=null;
+    if(Math.abs(dx)>40){ swipedAt=Date.now(); go(dx<0 ? i+1 : i-1); }
+    start();
+  });
+
+  /* detail modal */
+  function fill(k){
+    var m=vis.length;
+    mi=((k%m)+m)%m;
+    var s=vis[mi];
+    var title=s.querySelector('h3').textContent;
+    tEl.textContent=title;
+    dEl.textContent=s.querySelector('p').textContent;
+    tagsEl.innerHTML='';
+    s.querySelectorAll('.tag').forEach(function(t){
+      var c=document.createElement('span'); c.className='tag'; c.textContent=t.textContent; tagsEl.appendChild(c);
+    });
+    mail.href='mailto:engrhabibur.rahman93@gmail.com?subject='+encodeURIComponent('Project: '+title);
+    pPrev.disabled=pNext.disabled=(m<2);
+    go(mi);
+  }
+  function openModal(k){
+    modalOpen=true; stop(); fill(k);
+    modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
+    setTimeout(function(){ tEl.focus(); }, 80);
+  }
+  function closeModal(){
+    modalOpen=false;
+    modal.classList.remove('open'); modal.setAttribute('aria-hidden','true');
+    if(vis[i]) vis[i].focus({preventScroll:true});
+  }
+  all.forEach(function(s){ s.setAttribute('aria-haspopup','dialog'); });
+  track.addEventListener('click', function(e){
+    if(Date.now()-swipedAt<400) return;
+    var s=e.target.closest('.slide'); if(!s) return;
+    var k=vis.indexOf(s); if(k===-1) return;
+    openModal(k);
+  });
+  track.addEventListener('keydown', function(e){
+    if(e.key==='Enter' && e.target.classList && e.target.classList.contains('slide')){
+      e.preventDefault();
+      var k=vis.indexOf(e.target); if(k!==-1) openModal(k);
+    }
+  });
+  pPrev.addEventListener('click', function(){ fill(mi-1); });
+  pNext.addEventListener('click', function(){ fill(mi+1); });
+  xBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', function(e){ if(e.target===modal) closeModal(); });
+  document.addEventListener('keydown', function(e){
+    if(!modal.classList.contains('open')) return;
+    if(e.key==='Escape'){ closeModal(); return; }
+    if(e.key==='Tab'){
+      var f=[xBtn,pPrev,pNext,mail].filter(function(el){ return !el.disabled; });
+      var first=f[0], last=f[f.length-1], a=document.activeElement;
+      if(f.indexOf(a)===-1){ e.preventDefault(); (e.shiftKey ? last : first).focus(); }
+      else if(e.shiftKey && a===first){ e.preventDefault(); last.focus(); }
+      else if(!e.shiftKey && a===last){ e.preventDefault(); first.focus(); }
+    }
+  });
+
+  go(0); start();
 })();
 </script>
 </body>
