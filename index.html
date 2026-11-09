@@ -449,6 +449,9 @@
   .floatwin{position:absolute; width:196px; text-align:left; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:12px 14px; box-shadow:0 12px 30px rgba(15,23,42,.12); font-family:var(--mono); font-size:.68rem; color:var(--muted); z-index:3; animation:floaty 5s ease-in-out infinite;}
   .floatwin.fw1{left:-232px; top:6px;}
   .floatwin.fw2{right:-232px; top:96px; animation-delay:1.2s;}
+
+  .floatwin.fw3{left:-232px; bottom:6px; animation-delay:2.4s;}
+  @media (prefers-reduced-motion: reduce){.floatwin{animation:none;}}
   @keyframes floaty{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
   .fw-head{display:flex; align-items:center; gap:7px; font-size:.66rem; letter-spacing:.1em; color:var(--text); margin-bottom:10px;}
   .fw-row{display:flex; align-items:center; gap:8px; margin-bottom:7px;}
@@ -781,6 +784,11 @@
         <div class="fw-head"><span class="gdot"></span>NETWORK</div>
         <div class="fw-big">ALL LINKS &#9679; UP</div>
         <div class="fw-sub">FortiGate UTM active<br>1000+ users secured<br>Uptime 99.99%</div>
+      </div>
+      <div class="floatwin fw3" aria-hidden="true">
+        <div class="fw-head"><span class="gdot"></span>CERTIFIED</div>
+        <div class="fw-big">CCNA</div>
+        <div class="fw-sub">Valid to Sep 2028</div>
       </div>
     </div>
     <p class="lede reveal">9+ years keeping business-critical systems online — networks, servers, security and support — with 99.99% uptime across IT distribution and construction organizations.</p>
