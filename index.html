@@ -483,10 +483,10 @@
   @media(max-width:1150px){.floatwin{display:none;}}
 
   /* Robot bot button */
-  .botbtn{position:fixed; right:20px; bottom:calc(20px + env(safe-area-inset-bottom,0px)); z-index:80; width:58px; height:58px; border-radius:50%; background:var(--em); border:2px solid var(--on-em); cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 26px rgba(5,150,105,.45); animation:botbob 3s ease-in-out infinite; transition:transform .2s;}
+  .botbtn{position:fixed; right:20px; bottom:calc(20px + env(safe-area-inset-bottom,0px)); z-index:80; width:64px; height:64px; border-radius:50%; background:var(--surface); border:2px solid var(--em); cursor:pointer; display:flex; align-items:center; justify-content:center; overflow:hidden; padding:0; box-shadow:0 10px 26px rgba(5,150,105,.45); animation:botbob 3s ease-in-out infinite; transition:left 2.8s ease-in-out, top 2.8s ease-in-out, transform .2s;}
   .botbtn:hover{transform:scale(1.08);}
   @keyframes botbob{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
-  .botbtn svg{width:34px; height:34px;}
+  .botbtn img{width:100%; height:100%; object-fit:cover; display:block; pointer-events:none;}
   .botbtn .on{position:absolute; right:2px; top:2px; width:12px; height:12px; border-radius:50%; background:#22C55E; border:2px solid var(--on-em);}
 
   /* Terminal modal */
@@ -1189,7 +1189,7 @@
 
 <button class="totop" id="toTop" type="button" aria-label="Scroll to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
 
-<button class="botbtn" id="botBtn" type="button" aria-label="Open terminal assistant"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="3.4" r="1.1" fill="#fff"/><path d="M12 4.5v2.4" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/><rect x="4.5" y="7" width="15" height="11" rx="3.4" fill="#fff"/><circle cx="9.2" cy="12" r="1.5" fill="#0A0F0D"/><circle cx="14.8" cy="12" r="1.5" fill="#0A0F0D"/><path d="M9.5 15.2h5" stroke="#0A0F0D" stroke-width="1.5" stroke-linecap="round"/><path d="M4.5 11v3M19.5 11v3" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg><span class="on"></span></button>
+<button class="botbtn" id="botBtn" type="button" aria-label="Open terminal assistant" title="Unicorn assistant — click to open the terminal"><img id="botImg" src="images/unicorn-dark.png" alt="" draggable="false"><span class="on"></span></button>
 
 <div class="term" id="term" role="dialog" aria-label="Terminal assistant" aria-hidden="true">
   <div class="term-win">
@@ -2415,6 +2415,54 @@
   readTheme();
   resize();
   applyMotionPref();
+})();
+</script>
+<script>
+/* Roaming unicorn mascot: the terminal bot button, now a unicorn that wanders the page.
+   Click still opens the terminal (existing handler on #botBtn). Glides to random
+   viewport spots, pauses on hover and while the terminal is open; theme swaps the
+   unicorn (light theme -> dark unicorn, dark theme -> white unicorn). */
+(function(){
+  var btn=document.getElementById('botBtn');
+  var img=document.getElementById('botImg');
+  var term=document.getElementById('term');
+  if(!btn||!img) return;
+  var root=document.documentElement;
+  var reduced=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* theme swap */
+  function sync(){
+    var dark=root.getAttribute('data-theme')==='dark';
+    var want=dark?'images/unicorn-white.png':'images/unicorn-dark.png';
+    if(img.getAttribute('src')!==want) img.setAttribute('src',want);
+  }
+  sync();
+  new MutationObserver(sync).observe(root,{attributes:true,attributeFilter:['data-theme']});
+
+  if(reduced) return; /* static bottom-right, no roaming */
+
+  var M=16, hover=false;
+  function place(x,y){ btn.style.left=x+'px'; btn.style.top=y+'px'; btn.style.right='auto'; btn.style.bottom='auto'; }
+  function roam(){
+    if(document.hidden) return;
+    if(term && term.classList.contains('open')) return;
+    if(hover) return;
+    var w=btn.offsetWidth||64, h=btn.offsetHeight||64;
+    var maxX=Math.max(M, window.innerWidth-w-M), maxY=Math.max(M, window.innerHeight-h-M);
+    var x=M+Math.random()*(maxX-M), y=M+Math.random()*(maxY-M);
+    place(x,y);
+  }
+  /* anchor at the current (bottom-right) spot first so the first move doesn't jump */
+  var r=btn.getBoundingClientRect();
+  place(r.left, r.top);
+  btn.addEventListener('mouseenter', function(){ hover=true; });
+  btn.addEventListener('mouseleave', function(){ hover=false; });
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden) roam(); });
+  function loop(){
+    roam();
+    setTimeout(loop, 4200+Math.random()*2200); /* glide ~2.8s + pause ~1.4-3.6s */
+  }
+  setTimeout(loop, 2500); /* first wander after 2.5s */
 })();
 </script>
 </body>
