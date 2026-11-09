@@ -486,9 +486,9 @@
   .botbtn{position:fixed; right:20px; bottom:calc(20px + env(safe-area-inset-bottom,0px)); z-index:80; width:76px; height:76px; border-radius:50%; background:var(--surface); border:2px solid var(--em); cursor:pointer; display:flex; align-items:center; justify-content:center; overflow:hidden; padding:0; box-shadow:0 10px 26px rgba(5,150,105,.45); animation:flybob 2.6s ease-in-out infinite; transition:left 2.8s ease-in-out, top 2.8s ease-in-out, transform .2s;}
   .botbtn:hover{transform:scale(1.08);}
   @keyframes flybob{0%,100%{transform:translateY(0) rotate(-1.5deg);}50%{transform:translateY(-7px) rotate(1.5deg);}}
-  .botbtn img{width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; transition:transform .35s ease, opacity .35s ease;}
+  .botbtn img,.botbtn canvas{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; transition:transform .35s ease, opacity .35s ease;}
   .botbtn .on{position:absolute; right:2px; top:2px; width:12px; height:12px; border-radius:50%; background:#22C55E; border:2px solid var(--on-em);}
-  .botbtn.flip img{transform:scaleX(-1);}
+  .botbtn.flip img,.botbtn.flip canvas{transform:scaleX(-1);}
   .botbtn.landing{transition:left 1.1s cubic-bezier(.55,0,.85,.36), top 1.1s cubic-bezier(.55,0,.85,.36), transform .2s; animation:none;}
   .botbtn.landed{animation:none;}
 
@@ -1192,7 +1192,7 @@
 
 <button class="totop" id="toTop" type="button" aria-label="Scroll to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
 
-<button class="botbtn" id="botBtn" type="button" aria-label="Open terminal assistant" title="Unicorn assistant — click to open the terminal"><img id="botImg" src="images/unicorn-dark.png" alt="" draggable="false"><span class="on"></span></button>
+<button class="botbtn" id="botBtn" type="button" aria-label="Open terminal assistant" title="Unicorn assistant — click to open the terminal"><video id="botVid" src="images/unicorn-dark.mp4" autoplay muted loop playsinline disablepictureinpicture style="display:none"></video><canvas id="botCanvas" width="192" height="192"></canvas><img id="botImg" src="images/unicorn-dark.png" alt="" draggable="false"><span class="on"></span></button>
 
 <div class="term" id="term" role="dialog" aria-label="Terminal assistant" aria-hidden="true">
   <div class="term-win">
@@ -2421,33 +2421,84 @@
 })();
 </script>
 <script>
-/* Flying unicorn mascot: the terminal bot button, now a winged 3D unicorn that flies
-   around the page. Click -> it lands (descends to the bottom-right, folds its wings)
+/* Video unicorn mascot: a REAL Veo video of a winged unicorn flying around the page.
+   The clips were shot on a green screen; the green is keyed out live on a <canvas>
+   (transparent WebM video is not producible here), so only the unicorn shows and it
+   flies directly over the site theme. Click -> it lands (front-facing, wings folded)
    and the terminal opens; closing the terminal makes it take off again. */
 (function(){
   var btn=document.getElementById('botBtn');
+  var vid=document.getElementById('botVid');
+  var cv=document.getElementById('botCanvas');
   var img=document.getElementById('botImg');
   var term=document.getElementById('term');
-  if(!btn||!img) return;
+  if(!btn||!vid||!cv||!img) return;
+  var ctx=cv.getContext('2d');
+  var CW=192, CH=192, VH=108, VY=42; /* video drawn 192x108, centered vertically */
   var root=document.documentElement;
   var reduced=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  var landed=false, landing=false, hover=false;
+  var landed=false, landing=false, hover=false, keying=false, lastT=-1;
 
-  function fileFor(){
+  function mediaFor(){
     var dark=root.getAttribute('data-theme')==='dark';
-    if(dark) return landed?'images/unicorn-white-land.png':'images/unicorn-white.png';
-    return landed?'images/unicorn-dark-land.png':'images/unicorn-dark.png';
+    if(dark) return landed?{v:null,i:'images/unicorn-white-land.png'}:{v:'images/unicorn-white.mp4',i:'images/unicorn-white.png'};
+    return landed?{v:null,i:'images/unicorn-dark-land.png'}:{v:'images/unicorn-dark.mp4',i:'images/unicorn-dark.png'};
   }
-  /* crossfade image swap */
+  /* crossfade image swap (poster / landed state) */
   function setImg(src){
     if(img.getAttribute('src')===src) return;
     img.style.opacity='0';
     setTimeout(function(){ img.setAttribute('src',src); img.style.opacity='1'; }, 320);
   }
-  function sync(){ setImg(fileFor()); }
-  sync();
-  new MutationObserver(sync).observe(root,{attributes:true,attributeFilter:['data-theme']});
+  function setMedia(){
+    var m=mediaFor();
+    setImg(m.i);
+    if(reduced || !m.v){
+      /* static image only: reduced motion, or landed (wings folded, facing you) */
+      keying=false;
+      try{ vid.pause(); }catch(e){}
+      cv.style.display='none';
+      return;
+    }
+    cv.style.display='block';
+    if(vid.getAttribute('src')!==m.v){
+      vid.setAttribute('src',m.v);
+      try{ vid.load(); }catch(e){}
+    }
+    vid.muted=true;
+    var p=null;
+    try{ p=vid.play(); }catch(e){}
+    if(p && p.catch) p.catch(function(){ /* autoplay blocked: poster image stays visible */ });
+  }
+  /* live green-screen key: draw the video frame, drop green pixels, keep the unicorn */
+  function keyFrame(){
+    if(!keying) return;
+    if(vid.readyState<2){ requestAnimationFrame(keyFrame); return; }
+    if(vid.currentTime===lastT){ requestAnimationFrame(keyFrame); return; }
+    lastT=vid.currentTime;
+    ctx.clearRect(0,0,CW,CH);
+    ctx.drawImage(vid,0,VY,CW,VH);
+    var d=ctx.getImageData(0,0,CW,CH), px=d.data;
+    for(var i=0;i<px.length;i+=4){
+      var r=px[i], g=px[i+1], b=px[i+2];
+      var diff=g-Math.max(r,b); /* how "green" is this pixel */
+      if(diff>60) px[i+3]=0;
+      else if(diff>30) px[i+3]=Math.round(255*(1-(diff-30)/30));
+    }
+    ctx.putImageData(d,0,0);
+    requestAnimationFrame(keyFrame);
+  }
+  function startKeying(){
+    if(keying || reduced || landed) return;
+    keying=true; lastT=-1;
+    requestAnimationFrame(keyFrame);
+  }
+  vid.addEventListener('canplay', function(){ if(!landed && !reduced){ cv.style.display='block'; startKeying(); } });
+  vid.addEventListener('playing', startKeying);
+  vid.addEventListener('error', function(){ keying=false; cv.style.display='none'; });
+  setMedia();
+  new MutationObserver(setMedia).observe(root,{attributes:true,attributeFilter:['data-theme']});
 
   if(reduced) return; /* static bottom-right; click opens the terminal directly */
 
@@ -2478,14 +2529,14 @@
   }
   setTimeout(loop, 2500);
 
-  /* landing: descend to the bottom-right, fold wings, then open the terminal */
+  /* landing: descend to the bottom-right, fold wings (front-facing image), then open the terminal */
   window.unicornLand=function(done){
     if(landed || landing){ done(); return; }
     landing=true;
     btn.classList.add('landing');
     var s=landSpot();
     place(s.x, s.y);
-    setTimeout(function(){ landed=true; setImg(fileFor()); }, 550); /* wings fold mid-descent */
+    setTimeout(function(){ landed=true; setMedia(); }, 550); /* video pauses, front-facing image fades in mid-descent */
     setTimeout(function(){
       landing=false;
       btn.classList.remove('landing');
@@ -2499,11 +2550,12 @@
     if(!landed) return;
     landed=false;
     btn.classList.remove('landed');
-    setImg(fileFor());
+    setMedia();
     setTimeout(roam, 700);
   }).observe(term,{attributes:true,attributeFilter:['class']});
 })();
 </script>
+
 
 </body>
 </html>
