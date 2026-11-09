@@ -312,21 +312,31 @@
   .sgroup .pill{font-family:var(--sans); font-size:.85rem;}
   .sgroup.wide .pill{font-family:var(--mono); font-size:.76rem;}
   /* SKILLS ORBITAL */
-  .orbit{display:block; width:100%; max-width:100%; height:540px; max-height:560px; margin:0 auto 8px;}
+  .orbit{display:block; width:100%; max-width:100%; height:700px; max-height:720px; margin:0 auto 8px;}
   .orbit[hidden]{display:none;}
-  .orb-stage{position:relative; width:540px; max-width:100%; height:540px; margin:0 auto;}
+  .orb-stage{position:relative; width:700px; max-width:100%; height:700px; margin:0 auto;}
   .orb-ring{position:absolute; left:50%; top:50%; border:1px dashed var(--line); border-radius:50%; transform:translate(-50%,-50%); pointer-events:none;}
-  .orb-ring.r1{width:270px; height:270px; border-color:var(--faint); opacity:.45;}
-  .orb-ring.r2{width:440px; height:440px;}
+  .orb-ring.r1{width:250px; height:250px; border-color:var(--faint); opacity:.45;}
+  .orb-ring.r2{width:420px; height:420px;}
+  .orb-ring.r3{width:590px; height:590px;}
   .orb-core{position:absolute; left:50%; top:50%; width:172px; transform:translate(-50%,-50%); text-align:center; padding:16px 12px; background:var(--surface); border:1px solid var(--em); border-radius:14px; box-shadow:var(--shadow-h), 0 0 0 4px var(--em-soft); z-index:2;}
   .orb-core-t{font-family:var(--mono); font-weight:500; font-size:.9rem; letter-spacing:.12em; color:var(--em);}
   .orb-core-s{margin-top:6px; font-family:var(--mono); font-size:.62rem; letter-spacing:.04em; line-height:1.45; color:var(--faint);}
-  .orb-chip{position:absolute; left:50%; top:50%; width:68px; height:68px; margin:-34px 0 0 -34px; padding:0; border-radius:50%; display:flex; align-items:center; justify-content:center;
-    font-family:var(--mono); font-size:.6rem; letter-spacing:-.02em; white-space:nowrap; color:var(--muted); background:var(--chip); border:1px solid var(--line); box-shadow:var(--shadow); cursor:pointer;
-    transform:rotate(var(--a)) translate(var(--r)) rotate(calc(-1 * var(--a))); transition:color .2s,border-color .2s,background .2s,box-shadow .2s; z-index:1;}
-  .orb-chip:hover,.orb-chip:focus-visible,.orb-chip.on{color:var(--em); border-color:var(--em); background:var(--em-soft); box-shadow:0 0 0 3px var(--em-soft), 0 0 18px rgba(5,150,105,.45); outline:none; z-index:3;}
-  [data-theme="dark"] .orb-chip{background:var(--surface);}
-  [data-theme="dark"] .orb-chip:hover,[data-theme="dark"] .orb-chip:focus-visible,[data-theme="dark"] .orb-chip.on{color:var(--em-d); background:var(--em-soft); box-shadow:0 0 0 3px var(--em-soft), 0 0 22px rgba(16,185,129,.6);}
+  .orb-chip{position:absolute; left:50%; top:50%; width:78px; height:auto; margin:-34px 0 0 -39px; padding:0; background:transparent; border:0; border-radius:0; box-shadow:none; display:flex; flex-direction:column; align-items:center; gap:4px;
+    font-family:var(--mono); color:var(--muted); cursor:pointer; outline:none; transform-origin:50% 34px;
+    transform:rotate(var(--a)) translate(var(--r)) rotate(calc(-1 * var(--a))); z-index:1;}
+  .orb-chip:hover,.orb-chip:focus-visible,.orb-chip.on{z-index:3;}
+  .orb-disc{flex:none; width:68px; height:68px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--chip); border:1px solid var(--line); box-shadow:var(--shadow); transition:border-color .2s,background .2s,box-shadow .2s;}
+  .orb-disc img{display:block; width:26px; height:26px; object-fit:contain;}
+  .orb-chip img[src*="nmap"]{width:36px; height:auto;}
+  .orb-lbl{display:block; max-width:78px; font-size:.58rem; line-height:1.1; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-align:center; transition:color .2s;}
+  .orb-chip:hover .orb-disc,.orb-chip:focus-visible .orb-disc,.orb-chip.on .orb-disc{border-color:var(--em); background:var(--em-soft); box-shadow:0 0 0 3px var(--em-soft), 0 0 18px rgba(5,150,105,.45);}
+  .orb-chip:hover .orb-lbl,.orb-chip:focus-visible .orb-lbl,.orb-chip.on .orb-lbl{color:var(--em);}
+  [data-theme="dark"] .orb-disc{background:var(--surface);}
+  [data-theme="dark"] .orb-chip:hover .orb-disc,[data-theme="dark"] .orb-chip:focus-visible .orb-disc,[data-theme="dark"] .orb-chip.on .orb-disc{background:var(--em-soft); box-shadow:0 0 0 3px var(--em-soft), 0 0 22px rgba(16,185,129,.6);}
+  [data-theme="dark"] .orb-chip:hover .orb-lbl,[data-theme="dark"] .orb-chip:focus-visible .orb-lbl,[data-theme="dark"] .orb-chip.on .orb-lbl{color:var(--em-d);}
+  [data-theme="dark"] .orb-chip img{filter:brightness(1.35);}
+  [data-theme="dark"] .orb-chip img[src*="github"]{filter:invert(1);}
   [data-theme="dark"] .orb-ring{border-color:var(--line);}
   [data-theme="dark"] .orb-core{box-shadow:var(--shadow-h), 0 0 26px rgba(16,185,129,.22);}
   .orb-tip{position:absolute; left:0; top:0; z-index:5; display:flex; flex-direction:column; gap:2px; padding:8px 12px; background:var(--surface); border:1px solid var(--em); border-radius:10px; box-shadow:var(--shadow-h); font-family:var(--mono); white-space:nowrap; pointer-events:none; opacity:0; visibility:hidden; transition:opacity .15s;}
@@ -358,14 +368,18 @@
   /* SKILLS ORBITAL — slow rotation (added 2026-11-09, user asked "ring ki gurbe na") */
   @property --orb1 { syntax:'<angle>'; inherits:false; initial-value:0deg; }
   @property --orb2 { syntax:'<angle>'; inherits:false; initial-value:0deg; }
+  @property --orb3 { syntax:'<angle>'; inherits:false; initial-value:0deg; }
   @keyframes orb1 { to { --orb1:360deg; } }
   @keyframes orb2 { to { --orb2:-360deg; } }
+  @keyframes orb3 { to { --orb3:360deg; } }
   @keyframes orb-ring-spin { from { transform:translate(-50%,-50%) rotate(0deg); } to { transform:translate(-50%,-50%) rotate(360deg); } }
   @keyframes orb-ring-spin-rev { from { transform:translate(-50%,-50%) rotate(0deg); } to { transform:translate(-50%,-50%) rotate(-360deg); } }
   .orb-chip.orb-in{transform:rotate(calc(var(--a) + var(--orb1,0deg))) translate(var(--r)) rotate(calc(-1 * var(--a) - var(--orb1,0deg))); animation:orb1 60s linear infinite;}
-  .orb-chip.orb-out{transform:rotate(calc(var(--a) + var(--orb2,0deg))) translate(var(--r)) rotate(calc(-1 * var(--a) - var(--orb2,0deg))); animation:orb2 90s linear infinite;}
+  .orb-chip.orb-mid{transform:rotate(calc(var(--a) + var(--orb2,0deg))) translate(var(--r)) rotate(calc(-1 * var(--a) - var(--orb2,0deg))); animation:orb2 90s linear infinite;}
+  .orb-chip.orb-out{transform:rotate(calc(var(--a) + var(--orb3,0deg))) translate(var(--r)) rotate(calc(-1 * var(--a) - var(--orb3,0deg))); animation:orb3 120s linear infinite;}
   .orb-ring.r1{animation:orb-ring-spin 60s linear infinite;}
   .orb-ring.r2{animation:orb-ring-spin-rev 90s linear infinite;}
+  .orb-ring.r3{animation:orb-ring-spin 120s linear infinite;}
   .orb-stage:hover .orb-chip,.orb-stage:hover .orb-ring{animation-play-state:paused;}
   @media (prefers-reduced-motion: reduce){
     .orb-chip,.orb-ring{animation:none !important;}
@@ -922,26 +936,55 @@
       <div class="orb-stage">
         <span class="orb-ring r1" aria-hidden="true"></span>
         <span class="orb-ring r2" aria-hidden="true"></span>
+        <span class="orb-ring r3" aria-hidden="true"></span>
         <div class="orb-core">
           <div class="orb-core-t">SKILLS.EXE</div>
-          <div class="orb-core-s">16 skills · 14 technologies</div>
+          <div class="orb-core-s">16 skills · 41 technologies</div>
         </div>
-        <!-- Inner ring (5) -->
-        <button type="button" class="orb-chip orb-in" style="--a:-90deg;--r:135px" aria-label="Fortinet, Tools &amp; Platforms">Fortinet</button>
-        <button type="button" class="orb-chip orb-in" style="--a:-18deg;--r:135px" aria-label="VMware, Tools &amp; Platforms">VMware</button>
-        <button type="button" class="orb-chip orb-in" style="--a:54deg;--r:135px" aria-label="Zimbra, Tools &amp; Platforms">Zimbra</button>
-        <button type="button" class="orb-chip orb-in" style="--a:126deg;--r:135px" aria-label="Cisco, Tools &amp; Platforms">Cisco</button>
-        <button type="button" class="orb-chip orb-in" style="--a:198deg;--r:135px" aria-label="Linux, Tools &amp; Platforms">Linux</button>
-        <!-- Outer ring (9) -->
-        <button type="button" class="orb-chip orb-out" style="--a:-70deg;--r:220px" aria-label="FortiGate, Tools &amp; Platforms">FortiGate</button>
-        <button type="button" class="orb-chip orb-out" style="--a:-30deg;--r:220px" aria-label="VPN, Tools &amp; Platforms">VPN</button>
-        <button type="button" class="orb-chip orb-out" style="--a:10deg;--r:220px" aria-label="UTM, Tools &amp; Platforms">UTM</button>
-        <button type="button" class="orb-chip orb-out" style="--a:50deg;--r:220px" aria-label="ESXi, Tools &amp; Platforms">ESXi</button>
-        <button type="button" class="orb-chip orb-out" style="--a:90deg;--r:220px" aria-label="vSphere, Tools &amp; Platforms">vSphere</button>
-        <button type="button" class="orb-chip orb-out" style="--a:130deg;--r:220px" aria-label="HCI, Tools &amp; Platforms">HCI</button>
-        <button type="button" class="orb-chip orb-out" style="--a:170deg;--r:220px" aria-label="Barracuda, Tools &amp; Platforms">Barracuda</button>
-        <button type="button" class="orb-chip orb-out" style="--a:210deg;--r:220px" aria-label="VLAN, Tools &amp; Platforms">VLAN</button>
-        <button type="button" class="orb-chip orb-out" style="--a:250deg;--r:220px" aria-label="CCTV, Tools &amp; Platforms">CCTV</button>
+        <!-- Inner ring (6) -->
+        <button type="button" class="orb-chip orb-in" style="--a:-90deg;--r:125px" aria-label="Fortinet, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/fortinet.svg" alt="" loading="lazy"></span><span class="orb-lbl">Fortinet</span></button>
+        <button type="button" class="orb-chip orb-in" style="--a:-30deg;--r:125px" aria-label="Cisco, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/cisco.svg" alt="" loading="lazy"></span><span class="orb-lbl">Cisco</span></button>
+        <button type="button" class="orb-chip orb-in" style="--a:30deg;--r:125px" aria-label="VMware, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/vmware.svg" alt="" loading="lazy"></span><span class="orb-lbl">VMware</span></button>
+        <button type="button" class="orb-chip orb-in" style="--a:90deg;--r:125px" aria-label="GitHub, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/github.svg" alt="" loading="lazy"></span><span class="orb-lbl">GitHub</span></button>
+        <button type="button" class="orb-chip orb-in" style="--a:150deg;--r:125px" aria-label="Python, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/python.svg" alt="" loading="lazy"></span><span class="orb-lbl">Python</span></button>
+        <button type="button" class="orb-chip orb-in" style="--a:210deg;--r:125px" aria-label="Microsoft 365, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/m365.svg" alt="" loading="lazy"></span><span class="orb-lbl">M365</span></button>
+        <!-- Middle ring (14) -->
+        <button type="button" class="orb-chip orb-mid" style="--a:-77.14deg;--r:210px" aria-label="FortiGate, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/fortigate.svg" alt="" loading="lazy"></span><span class="orb-lbl">FortiGate</span></button>
+        <button type="button" class="orb-chip orb-mid" style="--a:-51.43deg;--r:210px" aria-label="VPN, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/vpn.svg" alt="" loading="lazy"></span><span class="orb-lbl">VPN</span></button>
+        <button type="button" class="orb-chip orb-mid" style="--a:-25.71deg;--r:210px" aria-label="UTM, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/utm.svg" alt="" loading="lazy"></span><span class="orb-lbl">UTM</span></button>
+        <button type="button" class="orb-chip orb-mid" style="--a:0deg;--r:210px" aria-label="VMware ESXi, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/esxi.svg" alt="" loading="lazy"></span><span class="orb-lbl">ESXi</span></button>
+        <button type="button" class="orb-chip orb-mid" style="--a:25.72deg;--r:210px" aria-label="VMware vSphere, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/vsphere.svg" alt="" loading="lazy"></span><span class="orb-lbl">vSphere</span></button>
+        <button type="button" class="orb-chip orb-mid" style="--a:51.43deg;--r:210px" aria-label="HCI, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/hci.svg" alt="" loading="lazy"></span><span class="orb-lbl">HCI</span></button>
+        <button type="button" class="orb-chip orb-mid" style="--a:77.15deg;--r:210px" aria-label="Zimbra, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/zimbra.svg" alt="" loading="lazy"></span><span class="orb-lbl">Zimbra</span></button>
+        <button type="button" class="orb-chip orb-mid" style="--a:102.86deg;--r:210px" aria-label="Barracuda, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/barracuda.svg" alt="" loading="lazy"></span><span class="orb-lbl">Barracuda</span></button>
+        <button type="button" class="orb-chip orb-mid" style="--a:128.57deg;--r:210px" aria-label="Linux, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/linux.svg" alt="" loading="lazy"></span><span class="orb-lbl">Linux</span></button>
+        <button type="button" class="orb-chip orb-mid" style="--a:154.29deg;--r:210px" aria-label="VLAN, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/vlan.svg" alt="" loading="lazy"></span><span class="orb-lbl">VLAN</span></button>
+        <button type="button" class="orb-chip orb-mid" style="--a:180deg;--r:210px" aria-label="CCTV, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/cctv.svg" alt="" loading="lazy"></span><span class="orb-lbl">CCTV</span></button>
+        <button type="button" class="orb-chip orb-mid" style="--a:205.72deg;--r:210px" aria-label="MikroTik, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/mikrotik.svg" alt="" loading="lazy"></span><span class="orb-lbl">MikroTik</span></button>
+        <button type="button" class="orb-chip orb-mid" style="--a:231.43deg;--r:210px" aria-label="PowerShell, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/powershell.svg" alt="" loading="lazy"></span><span class="orb-lbl">PowerShell</span></button>
+        <button type="button" class="orb-chip orb-mid" style="--a:257.15deg;--r:210px" aria-label="Windows 11, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/windows11.svg" alt="" loading="lazy"></span><span class="orb-lbl">Win 11</span></button>
+        <!-- Outer ring (21) -->
+        <button type="button" class="orb-chip orb-out" style="--a:-81.43deg;--r:295px" aria-label="Red Hat, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/redhat.svg" alt="" loading="lazy"></span><span class="orb-lbl">Red Hat</span></button>
+        <button type="button" class="orb-chip orb-out" style="--a:-64.29deg;--r:295px" aria-label="Debian, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/debian.svg" alt="" loading="lazy"></span><span class="orb-lbl">Debian</span></button>
+        <button type="button" class="orb-chip orb-out" style="--a:-47.14deg;--r:295px" aria-label="Ubuntu, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/ubuntu.svg" alt="" loading="lazy"></span><span class="orb-lbl">Ubuntu</span></button>
+        <button type="button" class="orb-chip orb-out" style="--a:-30deg;--r:295px" aria-label="Kali Linux, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/kali.svg" alt="" loading="lazy"></span><span class="orb-lbl">Kali</span></button>
+        <button type="button" class="orb-chip orb-out" style="--a:-12.86deg;--r:295px" aria-label="Windows Server 2022, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/windows-server.svg" alt="" loading="lazy"></span><span class="orb-lbl">Win Server 2022</span></button>
+        <button type="button" class="orb-chip orb-out" style="--a:4.28deg;--r:295px" aria-label="Windows 10, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/windows10.svg" alt="" loading="lazy"></span><span class="orb-lbl">Win 10</span></button>
+        <button type="button" class="orb-chip orb-out" style="--a:21.43deg;--r:295px" aria-label="macOS, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/macos.svg" alt="" loading="lazy"></span><span class="orb-lbl">macOS</span></button>
+        <button type="button" class="orb-chip orb-out" style="--a:38.57deg;--r:295px" aria-label="Microsoft Word, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/word.svg" alt="" loading="lazy"></span><span class="orb-lbl">Word</span></button>
+        <button type="button" class="orb-chip orb-out" style="--a:55.71deg;--r:295px" aria-label="Microsoft Excel, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/excel.svg" alt="" loading="lazy"></span><span class="orb-lbl">Excel</span></button>
+        <button type="button" class="orb-chip orb-out" style="--a:72.86deg;--r:295px" aria-label="Microsoft Project, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/project.svg" alt="" loading="lazy"></span><span class="orb-lbl">Project</span></button>
+        <button type="button" class="orb-chip orb-out" style="--a:90deg;--r:295px" aria-label="Microsoft Visio, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/visio.svg" alt="" loading="lazy"></span><span class="orb-lbl">Visio</span></button>
+        <button type="button" class="orb-chip orb-out" style="--a:107.14deg;--r:295px" aria-label="Nmap, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/nmap.png" alt="" loading="lazy"></span><span class="orb-lbl">Nmap</span></button>
+        <button type="button" class="orb-chip orb-out" style="--a:124.28deg;--r:295px" aria-label="Brute Force, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/bruteforce.svg" alt="" loading="lazy"></span><span class="orb-lbl">Brute Force</span></button>
+        <button type="button" class="orb-chip orb-out" style="--a:141.43deg;--r:295px" aria-label="Metasploit, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/metasploit.svg" alt="" loading="lazy"></span><span class="orb-lbl">Metasploit</span></button>
+        <button type="button" class="orb-chip orb-out" style="--a:158.57deg;--r:295px" aria-label="Wireshark, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/wireshark.svg" alt="" loading="lazy"></span><span class="orb-lbl">Wireshark</span></button>
+        <button type="button" class="orb-chip orb-out" style="--a:175.71deg;--r:295px" aria-label="SQLmap, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/sqlmap.svg" alt="" loading="lazy"></span><span class="orb-lbl">SQLmap</span></button>
+        <button type="button" class="orb-chip orb-out" style="--a:192.86deg;--r:295px" aria-label="Hydra, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/hydra.svg" alt="" loading="lazy"></span><span class="orb-lbl">Hydra</span></button>
+        <button type="button" class="orb-chip orb-out" style="--a:210deg;--r:295px" aria-label="Aircrack-ng, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/aircrack.svg" alt="" loading="lazy"></span><span class="orb-lbl">Aircrack-ng</span></button>
+        <button type="button" class="orb-chip orb-out" style="--a:227.14deg;--r:295px" aria-label="Nikto, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/nikto.svg" alt="" loading="lazy"></span><span class="orb-lbl">Nikto</span></button>
+        <button type="button" class="orb-chip orb-out" style="--a:244.28deg;--r:295px" aria-label="Dark Web, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/darkweb.svg" alt="" loading="lazy"></span><span class="orb-lbl">Dark Web</span></button>
+        <button type="button" class="orb-chip orb-out" style="--a:261.43deg;--r:295px" aria-label="C, Tools &amp; Platforms"><span class="orb-disc"><img src="images/logos/c.svg" alt="" loading="lazy"></span><span class="orb-lbl">C</span></button>
         <div class="orb-tip" id="orbTip" role="tooltip"><b></b><span>Tools &amp; Platforms</span></div>
       </div>
     </div>
@@ -964,7 +1007,7 @@
       </div>
       <div class="sgroup wide reveal" data-g="tools">
         <h3>Tools &amp; Platforms</h3>
-        <div class="pills"><span class="pill">Fortinet</span><span class="pill">FortiGate</span><span class="pill">VPN</span><span class="pill">UTM</span><span class="pill">VMware</span><span class="pill">ESXi</span><span class="pill">vSphere</span><span class="pill">HCI</span><span class="pill">Zimbra</span><span class="pill">Barracuda</span><span class="pill">Linux</span><span class="pill">Cisco</span><span class="pill">VLAN</span><span class="pill">CCTV</span></div>
+        <div class="pills"><span class="pill">Fortinet</span><span class="pill">FortiGate</span><span class="pill">VPN</span><span class="pill">UTM</span><span class="pill">VMware</span><span class="pill">ESXi</span><span class="pill">vSphere</span><span class="pill">HCI</span><span class="pill">Zimbra</span><span class="pill">Barracuda</span><span class="pill">Linux</span><span class="pill">Cisco</span><span class="pill">VLAN</span><span class="pill">CCTV</span><span class="pill">GitHub</span><span class="pill">Python</span><span class="pill">Microsoft 365</span><span class="pill">MikroTik</span><span class="pill">PowerShell</span><span class="pill">Windows 11</span><span class="pill">Red Hat</span><span class="pill">Debian</span><span class="pill">Ubuntu</span><span class="pill">Kali Linux</span><span class="pill">Windows Server 2022</span><span class="pill">Windows 10</span><span class="pill">macOS</span><span class="pill">Microsoft Word</span><span class="pill">Microsoft Excel</span><span class="pill">Microsoft Project</span><span class="pill">Microsoft Visio</span><span class="pill">Nmap</span><span class="pill">Brute Force</span><span class="pill">Metasploit</span><span class="pill">Wireshark</span><span class="pill">SQLmap</span><span class="pill">Hydra</span><span class="pill">Aircrack-ng</span><span class="pill">Nikto</span><span class="pill">Dark Web</span><span class="pill">C</span></div>
       </div>
     </div>
   </div>
@@ -1415,7 +1458,7 @@
   }
   function showTip(chip){
     if(!tip||!stage||!orbit||orbit.hidden) return;
-    tip.querySelector('b').textContent=chip.textContent;
+    tip.querySelector('b').textContent=chip.getAttribute('aria-label').split(',')[0];
     tip.classList.add('show');
     var s=stage.getBoundingClientRect(), c=chip.getBoundingClientRect();
     var tw=tip.offsetWidth, th=tip.offsetHeight;
