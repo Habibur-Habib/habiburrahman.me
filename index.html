@@ -1829,6 +1829,13 @@
     slider.dispatchEvent(ev);
   }
 
+  /* The modal overlay is not a child of the slider, so moving the mouse over it
+     fires a real pointerleave on the slider and the init resumes auto-advance
+     behind the open modal. Re-pause while the modal is open. */
+  slider.addEventListener('pointerleave', function(){
+    if(modal.classList.contains('open')) fire('pointerenter');
+  });
+
   function addRow(label,value){
     var row=document.createElement('div'); row.className='ct-row';
     var dt=document.createElement('dt'); dt.textContent=label;
