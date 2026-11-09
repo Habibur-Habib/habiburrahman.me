@@ -98,7 +98,8 @@
   }
   a{color:inherit;}
   img{max-width:100%;}
-  #bgnet{position:fixed; inset:0; width:100%; height:100%; z-index:0; pointer-events:none;}
+  /* Interactive diamond network (behind all content, never intercepts input) */
+  #netCanvas{position:fixed; inset:0; width:100%; height:100%; display:block; z-index:0; pointer-events:none;}
   .bgterm{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; font-family:var(--mono); color:var(--term); font-size:12px; white-space:nowrap; user-select:none;}
   .bgterm span{position:absolute;}
   main,footer,.navwrap{position:relative; z-index:2;}
@@ -723,7 +724,7 @@
   </div>
 </div>
 
-<canvas id="bgnet" aria-hidden="true"></canvas>
+<canvas id="netCanvas" aria-hidden="true"></canvas>
 <div class="bgterm" aria-hidden="true">
   <span style="top:14%;left:4%">$ show system interface</span>
   <span style="top:30%;right:6%">root@habib:~$</span>
@@ -1363,41 +1364,6 @@
     sync();
   });
   sync();
-})();
-</script>
-<script>
-/* Background network */
-(function(){
-  var cv=document.getElementById('bgnet'); if(!cv||!cv.getContext) return;
-  var ctx=cv.getContext('2d'), nodes=[], W=0, H=0;
-  var seed=7; function rnd(){ seed=(seed*16807)%2147483647; return (seed-1)/2147483646; }
-  function build(){
-    var dpr=Math.min(window.devicePixelRatio||1,2);
-    W=window.innerWidth; H=window.innerHeight;
-    cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
-    seed=7; nodes=[];
-    var count=Math.round(Math.min(46,Math.max(18,W*H/30000)));
-    for(var i=0;i<count;i++) nodes.push({x:rnd()*W,y:rnd()*H});
-    draw();
-  }
-  function draw(){
-    var cs=getComputedStyle(document.documentElement);
-    var nc=cs.getPropertyValue('--node').trim()||'rgba(5,150,105,.45)';
-    var lc=cs.getPropertyValue('--link-l').trim()||'rgba(5,150,105,.16)';
-    ctx.clearRect(0,0,W,H);
-    ctx.lineWidth=1; ctx.strokeStyle=lc;
-    for(var i=0;i<nodes.length;i++){
-      for(var j=i+1;j<nodes.length;j++){
-        var dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y;
-        if(dx*dx+dy*dy<24000){ ctx.beginPath(); ctx.moveTo(nodes[i].x,nodes[i].y); ctx.lineTo(nodes[j].x,nodes[j].y); ctx.stroke(); }
-      }
-    }
-    ctx.fillStyle=nc;
-    for(var k=0;k<nodes.length;k++){ ctx.beginPath(); ctx.arc(nodes[k].x,nodes[k].y,2.2,0,6.2832); ctx.fill(); }
-  }
-  var t; window.addEventListener('resize',function(){ clearTimeout(t); t=setTimeout(build,150); });
-  new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
-  build();
 })();
 </script>
 <script>
@@ -2211,6 +2177,244 @@
     clearTimeout(t);
     t=setTimeout(function(){ ind.classList.remove('on'); },1000);
   });
+})();
+</script>
+<script>
+/* Interactive diamond network: drifting diamond nodes + eased cursor glow + click ripple.
+   Self-contained, no libraries. Draws on <canvas id="netCanvas">. */
+(function(){
+  'use strict';
+
+  var cv = document.getElementById('netCanvas');
+  if (!cv || !cv.getContext) return;
+  var ctx = cv.getContext('2d');
+  if (!ctx) return;
+
+  var root = document.documentElement;
+  var rmq  = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+
+  /* ---- tunables ---- */
+  var AREA_PER_NODE = 18000;   // ~1 node per 18,000 px²
+  var MAX_NODES = 90, MIN_NODES = 12;
+  var LINK_DIST  = 120;        // node <-> node link distance (px)
+  var MOUSE_DIST = 160;        // cursor influence radius (px)
+  var MAX_DPR    = 1.5;        // devicePixelRatio cap
+  var SPEED      = 0.16;       // max drift, px per 60fps frame
+  var GLOW_R     = 240;        // soft glow radius (px)
+  var GLOW_EASE  = 0.08;       // lerp factor per 60fps frame (lower = lazier trail)
+  var RIPPLE_MS  = 900, RIPPLE_MAX = 190, MAX_RIPPLES = 6;
+
+  /* ---- theme palettes (rgb strings so alpha can vary per element) ---- */
+  var PAL_LIGHT = { rgb:'5,150,105',   node:0.55, line:0.12, glow:0.08, ripple:0.55 };  // #059669
+  var PAL_DARK  = { rgb:'52,211,153',  node:0.90, line:0.25, glow:0.18, ripple:0.75 };  // #34d399
+  var pal = PAL_LIGHT;
+
+  /* ---- state ---- */
+  var W = 0, H = 0, dpr = 1;
+
+  var nodes = [], ripples = [];
+  var mouse = { x:0, y:0, active:false };
+  var glow  = { x:0, y:0, a:0 };           // eased glow position + presence (0..1)
+  var raf = 0, last = 0;
+  var reduced = !!(rmq && rmq.matches);
+
+  function readTheme(){
+    pal = (root.getAttribute('data-theme') === 'dark') ? PAL_DARK : PAL_LIGHT;
+  }
+
+  function makeNode(){
+    var ang = Math.random() * 6.2832;
+    var spd = SPEED * (0.4 + Math.random() * 0.6);
+    return { x:Math.random()*W, y:Math.random()*H, vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd };
+  }
+
+  /* ---- sizing: keeps existing nodes (rescaled) so resizes don't reshuffle the field ---- */
+  function resize(){
+    var nw = window.innerWidth, nh = window.innerHeight;
+    var nd = Math.min(window.devicePixelRatio || 1, MAX_DPR);
+    if (nw === W && nh === H && nd === dpr) return;
+
+    var sx = W ? nw / W : 1, sy = H ? nh / H : 1;
+    W = nw; H = nh; dpr = nd;
+    cv.width  = Math.round(W * dpr);
+    cv.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    for (var i = 0; i < nodes.length; i++){ nodes[i].x *= sx; nodes[i].y *= sy; }
+    var target = Math.max(MIN_NODES, Math.min(MAX_NODES, Math.round(W * H / AREA_PER_NODE)));
+    while (nodes.length < target) nodes.push(makeNode());
+    if (nodes.length > target) nodes.length = target;
+
+
+    if (reduced) render(0, false);   // static mode: repaint once after resize
+  }
+
+  /* ---- drawing ---- */
+  function diamond(x, y, s){         // small rotated square
+    ctx.beginPath();
+    ctx.moveTo(x, y - s);
+    ctx.lineTo(x + s, y);
+    ctx.lineTo(x, y + s);
+    ctx.lineTo(x - s, y);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function render(now, interactive){
+    var rgb = pal.rgb, i, j, n, dx, dy, d2, a;
+    ctx.clearRect(0, 0, W, H);
+
+    /* 1. soft glow that trails the cursor */
+    if (interactive && glow.a > 0.01){
+      var g = ctx.createRadialGradient(glow.x, glow.y, 0, glow.x, glow.y, GLOW_R);
+      g.addColorStop(0, 'rgba(' + rgb + ',' + (pal.glow * glow.a).toFixed(3) + ')');
+      g.addColorStop(1, 'rgba(' + rgb + ',0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(glow.x - GLOW_R, glow.y - GLOW_R, GLOW_R * 2, GLOW_R * 2);
+    }
+
+    /* 2. faint links between close nodes (fade out with distance) */
+    var L2 = LINK_DIST * LINK_DIST;
+    ctx.lineWidth = 1;
+    for (i = 0; i < nodes.length; i++){
+
+      for (j = i + 1; j < nodes.length; j++){
+        dx = nodes[i].x - nodes[j].x; dy = nodes[i].y - nodes[j].y;
+        d2 = dx * dx + dy * dy;
+        if (d2 < L2){
+          a = pal.line * (1 - Math.sqrt(d2) / LINK_DIST);
+          ctx.strokeStyle = 'rgba(' + rgb + ',' + a.toFixed(3) + ')';
+          ctx.beginPath(); ctx.moveTo(nodes[i].x, nodes[i].y); ctx.lineTo(nodes[j].x, nodes[j].y); ctx.stroke();
+        }
+      }
+    }
+
+    /* 3. cursor proximity: nearby nodes link toward the cursor and brighten; then draw diamonds */
+    var M2 = MOUSE_DIST * MOUSE_DIST;
+    var presence = interactive ? glow.a : 0;
+    for (i = 0; i < nodes.length; i++){
+      n = nodes[i];
+      var prox = 0;
+      if (presence > 0.01){
+        dx = n.x - mouse.x; dy = n.y - mouse.y; d2 = dx * dx + dy * dy;
+        if (d2 < M2){
+          prox = (1 - Math.sqrt(d2) / MOUSE_DIST) * presence;
+          a = Math.min(0.6, pal.line * 2.6 * prox);
+          ctx.strokeStyle = 'rgba(' + rgb + ',' + a.toFixed(3) + ')';
+          ctx.beginPath(); ctx.moveTo(n.x, n.y); ctx.lineTo(mouse.x, mouse.y); ctx.stroke();
+        }
+      }
+      a = pal.node + (1 - pal.node) * prox * 0.85;
+      ctx.fillStyle = 'rgba(' + rgb + ',' + a.toFixed(3) + ')';
+      diamond(n.x, n.y, 2.8 + 1.8 * prox);
+    }
+
+    /* 4. click ripples: one thin ring that expands and fades */
+
+    if (interactive){
+      for (i = ripples.length - 1; i >= 0; i--){
+        var p = (now - ripples[i].t) / RIPPLE_MS;
+        if (p >= 1){ ripples.splice(i, 1); continue; }
+        var e = 1 - Math.pow(1 - p, 3);                  // ease-out cubic
+        ctx.strokeStyle = 'rgba(' + rgb + ',' + (pal.ripple * (1 - p)).toFixed(3) + ')';
+        ctx.lineWidth = 1.6 - 0.8 * p;
+        ctx.beginPath(); ctx.arc(ripples[i].x, ripples[i].y, 6 + e * RIPPLE_MAX, 0, 6.2832); ctx.stroke();
+      }
+      ctx.lineWidth = 1;
+    }
+  }
+
+  /* ---- animation loop ---- */
+  function frame(now){
+    raf = requestAnimationFrame(frame);
+    if (!last) last = now;
+    var dt = Math.min((now - last) / 16.667, 3);         // frame-rate independent, clamped
+    last = now;
+
+    // glow eases toward the cursor (lerp), fades in/out with presence
+    var k = 1 - Math.pow(1 - GLOW_EASE, dt);
+    glow.x += (mouse.x - glow.x) * k;
+    glow.y += (mouse.y - glow.y) * k;
+    glow.a += ((mouse.active ? 1 : 0) - glow.a) * Math.min(1, 0.07 * dt);
+
+    // slow drift, wrapping just off-screen
+    for (var i = 0; i < nodes.length; i++){
+      var n = nodes[i];
+      n.x += n.vx * dt; n.y += n.vy * dt;
+      if (n.x < -10) n.x = W + 10; else if (n.x > W + 10) n.x = -10;
+      if (n.y < -10) n.y = H + 10; else if (n.y > H + 10) n.y = -10;
+
+    }
+    render(now, true);
+  }
+
+  function start(){
+    if (raf || reduced || document.hidden) return;
+    last = 0;
+    raf = requestAnimationFrame(frame);
+  }
+  function stop(){
+    if (raf){ cancelAnimationFrame(raf); raf = 0; }
+  }
+
+  /* ---- input (listens on window; the canvas itself is pointer-events:none) ---- */
+  window.addEventListener('pointermove', function(e){
+    mouse.x = e.clientX; mouse.y = e.clientY;
+    if (!mouse.active){
+      if (glow.a < 0.02){ glow.x = mouse.x; glow.y = mouse.y; }   // appear at the cursor, no sweep from a stale spot
+      mouse.active = true;
+    }
+  }, { passive: true });
+
+  root.addEventListener('mouseleave', function(){ mouse.active = false; });
+  window.addEventListener('blur',     function(){ mouse.active = false; });
+  window.addEventListener('pointerup',     function(e){ if (e.pointerType === 'touch') mouse.active = false; }, { passive: true });
+  window.addEventListener('pointercancel', function(e){ if (e.pointerType === 'touch') mouse.active = false; }, { passive: true });
+
+  // capture phase, so existing handlers that call stopPropagation() can't swallow the click
+  window.addEventListener('click', function(e){
+    if (reduced || document.hidden || !e.isTrusted) return;
+    if (!e.clientX && !e.clientY) return;                // keyboard / programmatic clicks carry no position
+    ripples.push({ x: e.clientX, y: e.clientY, t: performance.now() });
+
+    if (ripples.length > MAX_RIPPLES) ripples.shift();
+  }, true);
+
+  /* ---- lifecycle ---- */
+  // pause when the tab is hidden, resume on return
+  document.addEventListener('visibilitychange', function(){
+    if (document.hidden) stop(); else start();
+  });
+
+  // debounced resize
+  var rt = 0;
+  window.addEventListener('resize', function(){
+    clearTimeout(rt);
+    rt = setTimeout(resize, 150);
+  });
+
+  // live theme switching: <html data-theme="dark|light">
+  new MutationObserver(function(){
+    readTheme();
+    if (reduced) render(0, false);                        // static frame must repaint in the new colours
+  }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+
+  // reduced motion: one static frame, no loop, no ripples
+  function applyMotionPref(){
+    reduced = !!(rmq && rmq.matches);
+    if (reduced){ stop(); ripples.length = 0; render(0, false); }
+    else start();
+  }
+  if (rmq){
+    if (rmq.addEventListener) rmq.addEventListener('change', applyMotionPref);
+    else if (rmq.addListener) rmq.addListener(applyMotionPref);
+  }
+
+
+  /* ---- init ---- */
+  readTheme();
+  resize();
+  applyMotionPref();
 })();
 </script>
 </body>
