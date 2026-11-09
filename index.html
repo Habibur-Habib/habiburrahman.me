@@ -600,6 +600,35 @@
   .pj-cta{flex:1 1 100%; margin-left:0; text-align:center;}
 }
 
+/* CERTIFICATE DETAIL MODAL (reuses .pj shell) */
+#certTrack .slide{cursor:pointer;}
+#certTrack .slide:focus-visible{outline:2px solid var(--em); outline-offset:-4px; border-radius:16px;}
+.ct-win{width:min(660px,94vw);}
+.ct-fig{margin:0 0 18px; aspect-ratio:4/3; max-height:340px; border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--chip);}
+.ct-fig img{width:100%; height:100%; object-fit:contain; display:block;}
+.ct-fig.ct-missing{display:none;}
+.ct-head{display:flex; flex-wrap:wrap; align-items:center; gap:10px 12px;}
+.ct-issuer{margin:0; color:var(--body); font-size:1rem; line-height:1.5;}
+.ct-head .tags{margin-top:0;}
+.ct-rows{margin:16px 0 0; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--surface);}
+.ct-rows:empty{display:none;}
+.ct-row{display:grid; grid-template-columns:120px minmax(0,1fr); gap:12px; align-items:baseline; padding:10px 14px; border-top:1px solid var(--line);}
+.ct-row:first-child{border-top:none;}
+.ct-row dt{margin:0; font-family:var(--mono); font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; color:var(--faint);}
+.ct-row dd{margin:0; font-family:var(--mono); font-size:.82rem; color:var(--text); overflow-wrap:anywhere;}
+.ct-verify[hidden]{display:none;}
+.ct-verify:focus-visible{outline:2px solid var(--em); outline-offset:2px;}
+[data-theme="dark"] #certTrack .slide:focus-visible{outline-color:var(--em-d);}
+[data-theme="dark"] .ct-fig{background:#111A16; border-color:#1E2F28;}
+[data-theme="dark"] .ct-issuer{color:#CBD5E1;}
+[data-theme="dark"] .ct-rows{background:#0A0F0D; border-color:#1E2F28;}
+[data-theme="dark"] .ct-row{border-top-color:#1E2F28;}
+[data-theme="dark"] .ct-row dt{color:#7F928A;}
+[data-theme="dark"] .ct-row dd{color:#F8FAFC;}
+@media(max-width:480px){
+  .ct-row{grid-template-columns:1fr; gap:2px;}
+}
+
 </style>
 </head>
 <body>
@@ -1086,6 +1115,28 @@
         <button class="pj-nav" id="pjPrev" type="button">&larr; Prev</button>
         <button class="pj-nav" id="pjNext" type="button">Next &rarr;</button>
         <a class="pj-cta" id="pjMail" href="mailto:engrhabibur.rahman93@gmail.com">Discuss this project</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="pj" id="certModal" role="dialog" aria-modal="true" aria-labelledby="ctTitle" aria-hidden="true">
+  <div class="pj-win ct-win">
+    <div class="pj-bar">
+      <span class="tdot r"></span><span class="tdot y"></span><span class="tdot g"></span>
+      <h2 class="pj-title" id="ctTitle" tabindex="-1"></h2>
+      <button class="pj-x" id="ctX" type="button" aria-label="Close">&times;</button>
+    </div>
+    <div class="pj-body" aria-live="polite">
+      <figure class="ct-fig" id="ctFig"><img id="ctImg" src="" alt=""></figure>
+      <div class="ct-head">
+        <p class="ct-issuer" id="ctIssuer"></p>
+        <div class="tags"><span class="tag" id="ctYear"></span></div>
+      </div>
+      <dl class="ct-rows" id="ctRows"></dl>
+      <div class="pj-foot">
+        <button class="pj-nav" id="ctPrev" type="button">&larr; Prev</button>
+        <button class="pj-nav" id="ctNext" type="button">Next &rarr;</button>
+        <a class="pj-cta ct-verify" id="ctVerify" target="_blank" rel="noopener" hidden>Verify on Credly</a>
       </div>
     </div>
   </div>
@@ -1724,6 +1775,155 @@
   });
 
   go(0); start();
+})();
+</script>
+<script>
+/* Certificate detail modal — separate from the sliders init; does not re-init the cert slider */
+(function(){
+  var slider=document.getElementById('certSlider'), track=document.getElementById('certTrack'),
+      modal=document.getElementById('certModal'), tEl=document.getElementById('ctTitle'),
+      xBtn=document.getElementById('ctX'), cPrev=document.getElementById('ctPrev'), cNext=document.getElementById('ctNext'),
+      verify=document.getElementById('ctVerify'), fig=document.getElementById('ctFig'), img=document.getElementById('ctImg'),
+      issuerEl=document.getElementById('ctIssuer'), yearEl=document.getElementById('ctYear'), rowsEl=document.getElementById('ctRows');
+  if(!slider||!track||!modal||!tEl||!xBtn||!cPrev||!cNext||!verify||!fig||!img||!issuerEl||!yearEl||!rowsEl) return;
+
+  var slides=Array.prototype.slice.call(track.children);
+  var dots=slider.querySelectorAll('.s-dot');
+
+  /* verified facts only, indexed by slide order (0–10); missing field = omitted */
+  var FACTS=[
+    {id:'CSCO14831028', issued:'Sep 2025', expires:'Sep 2028'},
+    {id:'cd126501-53ad-4d38-8956-712b59cdcd8d', issued:'Aug 2026', url:'https://www.credly.com/badges/9f53c217-fd49-4fa8-b51c-4bd70fcb203f'},
+    {issued:'Apr 2025'},
+    {issued:'Jun 2022'},
+    {issued:'Jun 2022'},
+    {id:'1V4G2PKTGJ44QMWS', issued:'Jun 2022'},
+    {id:'F84E25KTGJBEQ63F', issued:'Jun 2022'},
+    {id:'00949991', issued:'16 Feb 2022'},
+    {id:'01129432', issued:'07 Feb 2022'},
+    {issued:'29 Dec 2020'},
+    {issued:'25 Nov 2019'}
+  ];
+  if(slides.length!==FACTS.length) return; /* facts are index-based: bail out if slide count ever changes */
+
+  var mi=0, swipedAt=0, viaKey=false;
+
+  /* slides: clickable + keyboard-focusable (roving tabindex follows the slider's own aria-hidden) */
+
+  slides.forEach(function(s){ s.setAttribute('aria-haspopup','dialog'); });
+  function syncTab(){
+    slides.forEach(function(s){
+      s.setAttribute('tabindex', s.getAttribute('aria-hidden')==='true' ? '-1' : '0');
+    });
+  }
+  syncTab();
+  if(window.MutationObserver){
+    new MutationObserver(syncTab).observe(track,{attributes:true, attributeFilter:['aria-hidden'], subtree:true});
+  }
+
+  /* pause / resume the untouched slider via the events its own init already listens to */
+  function fire(type){
+    var ev;
+    try{ ev=new PointerEvent(type,{pointerType:'mouse'}); }
+    catch(e){ ev=new Event(type); ev.pointerType='mouse'; }
+    slider.dispatchEvent(ev);
+  }
+
+  function addRow(label,value){
+    var row=document.createElement('div'); row.className='ct-row';
+    var dt=document.createElement('dt'); dt.textContent=label;
+    var dd=document.createElement('dd'); dd.textContent=value;
+    row.appendChild(dt); row.appendChild(dd); rowsEl.appendChild(row);
+  }
+
+  function fill(k){
+    mi=((k%slides.length)+slides.length)%slides.length;
+    var s=slides[mi], f=FACTS[mi];
+    var sImg=s.querySelector('.cert-fig img');
+    var title=s.querySelector('h3').textContent;
+    var issuerP=s.querySelector('.cert-info p'), yearT=s.querySelector('.tag');
+
+    tEl.textContent=title;
+    issuerEl.textContent=issuerP ? issuerP.textContent : '';
+    yearEl.textContent=yearT ? yearT.textContent : '';
+    yearEl.parentNode.style.display=yearT ? '' : 'none';
+
+    fig.classList.remove('ct-missing');
+    if(sImg && !(sImg.parentNode.classList.contains('is-missing'))){
+      img.onerror=function(){ fig.classList.add('ct-missing'); };
+      img.src=sImg.getAttribute('src');
+      img.alt=sImg.getAttribute('alt') || title;
+    } else {
+      img.removeAttribute('src'); img.alt=''; fig.classList.add('ct-missing');
+    }
+
+    rowsEl.innerHTML='';
+    if(f.id) addRow('Credential ID', f.id);
+    if(f.issued) addRow('Issued', f.issued);
+    if(f.expires) addRow('Expires', f.expires);
+
+    if(f.url){ verify.href=f.url; verify.hidden=false; }
+    else { verify.removeAttribute('href'); verify.hidden=true; }
+
+    cPrev.disabled=cNext.disabled=(slides.length<2);
+    if(dots[mi]) dots[mi].click(); /* keep underlying slider in sync */
+  }
+
+  function openModal(k, byKey){
+    viaKey=!!byKey;
+    fire('pointerenter');            /* pauses auto-advance while open */
+    fill(k);
+    modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
+    setTimeout(function(){ tEl.focus(); }, 80);
+  }
+  function closeModal(){
+    modal.classList.remove('open'); modal.setAttribute('aria-hidden','true');
+    fire('pointerleave');            /* resumes auto-advance */
+    var s=slides[mi];
+    if(s) s.focus({preventScroll:true});
+    if(!viaKey){                     /* pointer users: don't leave the timer held by focus */
+      var ev; try{ ev=new FocusEvent('focusout',{bubbles:true}); }catch(e){ ev=new Event('focusout',{bubbles:true}); }
+      slider.dispatchEvent(ev);
+    }
+  }
+
+  /* swipe vs click guard (400ms, same as project modal) */
+  var x0=null;
+  track.addEventListener('touchstart', function(e){ x0=e.touches[0].clientX; }, {passive:true});
+  track.addEventListener('touchend', function(e){
+    if(x0===null) return;
+    var dx=e.changedTouches[0].clientX-x0; x0=null;
+    if(Math.abs(dx)>40) swipedAt=Date.now();
+  }, {passive:true});
+
+  track.addEventListener('click', function(e){
+    if(Date.now()-swipedAt<400) return;
+    var s=e.target.closest('.slide'); if(!s) return;
+    var k=slides.indexOf(s); if(k===-1) return;
+    openModal(k,false);
+  });
+  track.addEventListener('keydown', function(e){
+    if(e.key==='Enter' && e.target.classList && e.target.classList.contains('slide')){
+      e.preventDefault();
+      var k=slides.indexOf(e.target); if(k!==-1) openModal(k,true);
+    }
+  });
+
+  cPrev.addEventListener('click', function(){ fill(mi-1); });
+  cNext.addEventListener('click', function(){ fill(mi+1); });
+  xBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', function(e){ if(e.target===modal) closeModal(); });
+  document.addEventListener('keydown', function(e){
+    if(!modal.classList.contains('open')) return;
+    if(e.key==='Escape'){ closeModal(); return; }
+    if(e.key==='Tab'){
+      var f=[xBtn,cPrev,cNext,verify].filter(function(el){ return !el.disabled && !el.hidden; });
+      var first=f[0], last=f[f.length-1], a=document.activeElement;
+      if(f.indexOf(a)===-1){ e.preventDefault(); (e.shiftKey ? last : first).focus(); }
+      else if(e.shiftKey && a===first){ e.preventDefault(); last.focus(); }
+      else if(!e.shiftKey && a===last){ e.preventDefault(); first.focus(); }
+    }
+  });
 })();
 </script>
 </body>
