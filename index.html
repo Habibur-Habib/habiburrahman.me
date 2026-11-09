@@ -2498,8 +2498,18 @@
     requestAnimationFrame(keyFrame);
   }
   vid.addEventListener('canplay', function(){ if(!landed && !reduced){ cv.style.display='block'; startKeying(); } });
+  vid.addEventListener('loadeddata', function(){ if(!landed && !reduced){ cv.style.display='block'; startKeying(); } });
   vid.addEventListener('playing', startKeying);
   vid.addEventListener('error', function(){ keying=false; cv.style.display='none'; img.style.opacity='1'; });
+  /* the video may already be playing before this script runs (autoplay during parse),
+     so start keying from state, not only from events — and keep retrying while flying */
+  function maybeStartKeying(){
+    if(reduced || landed) return;
+    if(vid.paused){ try{ var p=vid.play(); if(p && p.catch) p.catch(function(){}); }catch(e){} }
+    if(vid.readyState>=2 && !vid.paused) startKeying();
+  }
+  setInterval(maybeStartKeying, 1000);
+  setTimeout(maybeStartKeying, 300);
   setMedia();
   new MutationObserver(setMedia).observe(root,{attributes:true,attributeFilter:['data-theme']});
 
@@ -2558,6 +2568,7 @@
   }).observe(term,{attributes:true,attributeFilter:['class']});
 })();
 </script>
+
 
 
 
